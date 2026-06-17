@@ -24,4 +24,5 @@ There are only courses for the second semester of the first year of college
 * 毛概
 
 ### Second semester of sophomore year (大二第二学期) 
+* 发展心理学
 ... (still on the way)
