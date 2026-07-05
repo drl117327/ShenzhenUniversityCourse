@@ -1,4 +1,4 @@
-# Shenzhen University Coures
+# Shenzhen University Course
 
 这里包含了在深圳大学学习的实验报告或者是课件，主要是计算机与软件学院的课程
 
@@ -25,4 +25,5 @@ There are only courses for the second semester of the first year of college
 
 ### Second semester of sophomore year (大二第二学期) 
 * 发展心理学
+* 马原
 ... (still on the way)
