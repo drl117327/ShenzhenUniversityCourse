@@ -1,0 +1,72 @@
+页面结构：页面标题为“阅读器”
+创建工具栏：在页面顶部创建一个工具栏，提供放大、缩小和切换主题的选项。
+使用 id 为 toolbar 的 <div> 作为工具栏容器，并使用 ID 选择器设置工具栏样式，要求：
+背景颜色为 #333，字体颜色为白色
+文字水平居中对齐，宽度为屏幕宽度
+填充为 10px
+位置固定于顶部：top: 0;, position: fixed;, z-index: 100;
+工具栏包含放大、缩小和切换主题三个按钮，按钮的类名为 toolbar-button，使用类选择器设置按钮样式，要求：
+背景颜色为 #555
+字体大小为 16px，字体颜色为白色
+边界为 5px，无边框
+填充上下 10px，左右 20px
+使用 pointer 光标
+阅读区域：创建一个阅读器区域用于展示文本内容。
+使用 id 为 reader 的 <div> 作为阅读区域容器，并使用 ID 选择器设置样式，要求：
+上下边距为 60px，左右边距为自动
+边框为 2px 宽的 #ccc 实线
+填充为 20px，阴影设置：水平无阴影，垂直方向阴影 4px，模糊半径 8px，黑色透明度为 0.1
+最大宽度为 800px，高度为 2000px
+使用 position: relative;
+阅读区域中包含一个 <h2> 标题，行高为 2 倍。
+包含数段文本，使用类名为 text-content 的 <p> 标签包裹每段文本，要求：
+字体大小为 18px，行高为 1.6 倍
+文本两端对齐，下边距 20px
+字体颜色为 #333
+首行缩进 2 个字符，无文本装饰
+笔记区域：
+创建一个 id 为 note-container 的笔记区域，要求：
+宽度为 300px，高度为 200px
+背景颜色为 #ffffff，边框为 2px 宽的 #ccc 实线
+阴影盒子：0px 4px 8px，黑色透明度为 0.2
+填充为 10px，position: fixed;，位置为顶部 65%，右侧 3%
+包含一个 <h3> 标题“笔记”。
+包含无 id、类名的笔记文本段落，使用 <p> 标签包裹，要求：
+上下边距 10px，左右边距为 0
+文字左对齐，颜色为 #222
+样式声明：使用头部 CSS 来定义页面样式。
+默认设置所有元素的边距和填充为 0，盒模型为 border-box
+设置 <body> 的字体样式为 Arial、sans-serif，背景颜色为 #f0f0f0，填充为 20px，文字水平居中
+
+ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+    </style>
+</head>
+<body>
+    <!-- 工具栏 -->
+    <div id="toolbar">
+        <button class="toolbar-button">放大</button>
+        <button class="toolbar-button">缩小</button>
+        <button class="toolbar-button">切换主题</button>
+    </div>
+
+    <!-- 阅读区域 -->
+    <div id="reader">
+        <h2>文章标题</h2>
+        <p class="text-content">这是一段文本内容，旨在展示阅读器区域中的文本样式和布局效果。</p>
+        <p class="text-content">阅读区域可以展示多个段落，提供更好的阅读体验。</p>
+    </div>
+
+    <!-- 笔记区域 -->
+    <div id="note-container">
+        <h3>笔记</h3>
+        <p>这里是笔记内容，可以记录阅读过程中重要的事项。</p>
+    </div>
+</body>
+</html>

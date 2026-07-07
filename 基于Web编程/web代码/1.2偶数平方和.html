@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+<body>
+    <script>
+      function isEven(num) {
+        return num % 2 === 0;
+      }
+
+      function square(num) {
+        return num * num;
+      }
+
+      var numbers = [];
+      for (var i = 1; i <= 10; i++) {
+        numbers.push(i);
+      }
+
+      var evenSquares = numbers.filter(isEven).map(square);
+      var totalSum = evenSquares.reduce(function (acc, val) {
+        return acc + val;
+      }, 0);
+
+      console.log(evenSquares);
+      console.log("Total even squares sum:", totalSum);
+    </script>
+  </body>
+</html>

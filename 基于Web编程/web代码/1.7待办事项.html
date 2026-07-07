@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>任务清单</title>
+    <link rel="stylesheet" href="http://172.31.233.204/resource/css/exp9/9-2.css">
+    <style>
+        .button-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .button-container button {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        #clear-all { background-color: #f44336; }
+        #clear-completed { background-color: #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>任务清单</h1>
+    <input type="text" id="task-input" placeholder="输入新任务">
+    <button id="add-task">添加任务</button>
+    <ul id="task-list"></ul>
+    <div class="button-container">
+        <button id="clear-all">清空全部任务</button>
+        <button id="clear-completed">清空已完成任务</button>
+    </div>
+    <script>
+    //这里写JS代码，不要删除这个注释！
+    var taskInput = document.getElementById("task-input");
+    var addTaskBtn = document.getElementById("add-task");
+    var taskList = document.getElementById("task-list");
+    var clearAllBtn = document.getElementById("clear-all");
+    var clearCompletedBtn = document.getElementById("clear-completed");
+
+    function addTask() {
+        var taskName = taskInput.value.trim();
+        if (taskName === "") {
+            console.log("任务内容不能为空");
+            return;
+        }
+        var li = document.createElement("li");
+        var span = document.createElement("span");
+        span.textContent = taskName;
+        span.addEventListener("click", function() {
+            if (span.style.textDecoration === "line-through") {
+                span.style.textDecoration = "none";
+            } else {
+                span.style.textDecoration = "line-through";
+            }
+        });
+        var deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "删除";
+        deleteBtn.addEventListener("click", function() {
+            taskList.removeChild(li);
+            console.log("删除任务:" + taskName);
+        });
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+        console.log("添加任务:" + taskName);
+        taskInput.value = "";
+    }
+
+    addTaskBtn.addEventListener("click", addTask);
+
+    clearAllBtn.addEventListener("click", function() {
+        taskList.innerHTML = "";
+    });
+
+    clearCompletedBtn.addEventListener("click", function() {
+        var items = taskList.querySelectorAll("li");
+        for (var i = items.length - 1; i >= 0; i--) {
+            var span = items[i].querySelector("span");
+            if (span && span.style.textDecoration === "line-through") {
+                taskList.removeChild(items[i]);
+            }
+        }
+    });
+    </script>
+</body>
+</html>

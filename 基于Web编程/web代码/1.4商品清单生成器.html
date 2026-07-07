@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>商品清单生成器</title>
+    <style>
+      .low-price { color: green; }
+      .mid-price { color: blue; }
+      .high-price { color: red; }
+    </style>
+  </head>
+  <body>
+    <h1>商品清单</h1>
+    <ul id="product-list"></ul>
+    <p id="total-price"></p>
+    <script>
+      let products = [
+        { name: "苹果", price: 30 },
+        { name: "香蕉", price: 20 },
+        { name: "葡萄", price: 60 },
+        { name: "西瓜", price: 110 },
+        { name: "菠萝", price: 80 },
+      ];
+
+      var totalPrice = 0;
+      var list = document.getElementById("product-list");
+
+      for (var i = 0; i < products.length; i++) {
+        var product = products[i];
+        var listItem = document.createElement("li");
+        listItem.textContent = product.name + " - $" + product.price;
+
+        if (product.price < 50) {
+          listItem.className = "low-price";
+        } else if (product.price >= 50 && product.price <= 100) {
+          listItem.className = "mid-price";
+        } else {
+          listItem.className = "high-price";
+        }
+
+        list.appendChild(listItem);
+        totalPrice += product.price;
+      }
+
+      document.getElementById("total-price").textContent = "总价: $" + totalPrice;
+    </script>
+  </body>
+</html>

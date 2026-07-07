@@ -1,0 +1,75 @@
+页眉要求：
+<header> 标签，设置背景颜色为 #333，文字颜色为白色。
+页眉中的导航菜单内的 ul 使用 flex 布局，使用 justify-content 属性使得导航菜单项均匀分布，使用 align-items 将导航项垂直居中对齐。
+主容器布局要求： 主容器（.container）应使用 display: flex，实现左右两列布局。
+左右列宽度要求： 左右两列的宽度分别设置为 30% 和 70%，使用 flex-basis 属性实现。
+左侧文本区域样式：
+左侧文本区域（.text-content）背景颜色应为 #f2f2f2。
+内边距应设置为 20px。
+文字应两端对齐。
+右侧博客文章列表布局：
+右侧博客文章列表（.blog-content）应设置为纵向 flex 布局。
+使用 justify-content 属性使文章间距均匀。
+博客文章样式： 每篇文章 <article> 之间应设置适当的距离向下的外间距 20px。
+页脚要求：
+页脚应使用 <footer> 标签，背景颜色为 #333，文字颜色为白色。
+文字应居中对齐。
+视觉效果和全局样式要求：
+整个页面应布局清晰美观，文字对齐，颜色和间距符合设计要求。
+页面整体字体设置为宋体（'宋体'）。
+页面宽度设置为 50%，并使用 margin: 0 auto; 居中对齐。
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>博客页面实验</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav>
+        <ul>
+          <li><a href="#">首页</a></li>
+          <li><a href="#">博客</a></li>
+          <li><a href="#">关于我们</a></li>
+          <li><a href="#">联系我们</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="text-content">
+        <p>欢迎来到我们的博客</p>
+        <p>
+          在这里，您可以阅读关于各种主题的最新文章和资讯。我们提供丰富多彩的内容，涵盖科技、生活、旅行等多个领域。
+        </p>
+      </div>
+      <div class="blog-content">
+        <article>
+          <h2>文章标题一</h2>
+          <p>作者：张三</p>
+          <p>这是一篇关于技术趋势的文章，带您深入了解未来几年科技的走向。</p>
+        </article>
+        <article>
+          <h2>文章标题二</h2>
+          <p>作者：李四</p>
+          <p>
+            本文介绍了如何在现代生活中保持工作与生活的平衡，帮助您减少压力。
+          </p>
+        </article>
+        <article>
+          <h2>文章标题三</h2>
+          <p>作者：王五</p>
+          <p>
+            跟随我们的旅行博客，探索世界上最美丽的景点，感受不同文化的魅力。
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2024 博客平台. 保留所有权利。</p>
+    </footer>
+  </body>
+</html>

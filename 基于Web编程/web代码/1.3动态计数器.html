@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动态计数器</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f8ff;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+    }
+    .counter-value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #333;
+      margin: 20px 0;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      transition: background-color 0.3s ease;
+    }
+    #increment { background-color: #4CAF50; }
+    #decrement { background-color: #f44336; }
+    #increment:hover { background-color: #45a049; }
+    #decrement:hover { background-color: #e53935; }
+    #message { color: red; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div id="counter" class="counter-value">0</div>
+  <button id="increment" class="btn">加一</button>
+  <button id="decrement" class="btn">减一</button>
+  <p id="message"></p>
+</div>
+<script>
+  var count = 0;
+  var counterEl = document.getElementById("counter");
+  var messageEl = document.getElementById("message");
+
+  document.getElementById("increment").addEventListener("click", function() {
+    if (count >= 10) {
+      messageEl.textContent = "计数器不能超过10";
+    } else {
+      count++;
+      counterEl.textContent = count;
+      messageEl.textContent = "";
+    }
+  });
+
+  document.getElementById("decrement").addEventListener("click", function() {
+    if (count <= 0) {
+      messageEl.textContent = "计数器不能低于0";
+    } else {
+      count--;
+      counterEl.textContent = count;
+      messageEl.textContent = "";
+    }
+  });
+</script>
+</body>
+</html>

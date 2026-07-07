@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>手机通讯录管理器</title>
+    <link rel="stylesheet" href="http://172.31.233.204/resource/css/11-2.css">
+</head>
+<body>
+    <h1>手机通讯录管理器</h1>
+    <div class="container">
+        <div class="input-group">
+            <input type="text" id="name" placeholder="请输入姓名" />
+            <input type="text" id="phone" placeholder="请输入电话号码" />
+        </div>
+        <div class="input-group">
+            <input type="button" id="addButton" value="添加" />
+        </div>
+        <div id="content">
+            <ul>
+                <li>通讯录为空，请添加联系人。</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        var nameInput = document.getElementById("name");
+        var phoneInput = document.getElementById("phone");
+        var contentArea = document.getElementById("content");
+        var addButton = document.getElementById("addButton");
+
+        nameInput.addEventListener("input", function() {
+            this.value = this.value.replace(/[^a-zA-Z\u4e00-\u9fa5\s]/g, "");
+        });
+
+        phoneInput.addEventListener("input", function() {
+            this.value = this.value.replace(/[^0-9]/g, "");
+        });
+
+        var db;
+        var request = window.indexedDB.open("contactsDB", 1);
+
+        request.onerror = function(event) {
+            alert("数据库打开出错");
+        };
+
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            loadContacts();
+        };
+
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains("contacts")) {
+                db.createObjectStore("contacts", { keyPath: "phone" });
+            }
+        };
+
+        function createContactItem(name, phone) {
+            var li = document.createElement("li");
+            var textNode = document.createTextNode(name + " - " + phone);
+            li.appendChild(textNode);
+            var deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.textContent = "删除";
+            deleteBtn.addEventListener("click", function() {
+                deleteContact(phone);
+            });
+            li.appendChild(deleteBtn);
+            return li;
+        }
+
+        function loadContacts() {
+            var list = contentArea.querySelector("ul");
+            list.innerHTML = "";
+            var transaction = db.transaction(["contacts"], "readonly");
+            var objectStore = transaction.objectStore("contacts");
+            var request = objectStore.openCursor();
+            var hasContacts = false;
+
+            request.onsuccess = function(event) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    hasContacts = true;
+                    var contact = cursor.value;
+                    var li = createContactItem(contact.name, contact.phone);
+                    list.appendChild(li);
+                    cursor.continue();
+                } else {
+                    if (!hasContacts) {
+                        list.innerHTML = "<li>通讯录为空，请添加联系人。</li>";
+                    }
+                }
+            };
+        }
+
+        function addContact() {
+            var name = nameInput.value.trim();
+            var phone = phoneInput.value.trim();
+
+            if (!name) {
+                alert("姓名不能为空！");
+                return;
+            }
+            if (!phone) {
+                alert("电话号码不能为空！");
+                return;
+            }
+
+            if (/<script|javascript|alert|eval|function/i.test(name) || /<script|javascript|alert|eval|function/i.test(phone)) {
+                alert("非法字符输入！");
+                return;
+            }
+
+            var transaction = db.transaction(["contacts"], "readwrite");
+            var objectStore = transaction.objectStore("contacts");
+            var getRequest = objectStore.get(phone);
+
+            getRequest.onsuccess = function(event) {
+                var existing = event.target.result;
+                if (existing) {
+                    if (confirm("该号码已存在，是否覆盖？")) {
+                        var putRequest = objectStore.put({ name: name, phone: phone });
+                        putRequest.onsuccess = function() {
+                            alert("联系人已更新！");
+                            loadContacts();
+                        };
+                    }
+                } else {
+                    var addRequest = objectStore.add({ name: name, phone: phone });
+                    addRequest.onsuccess = function() {
+                        alert("联系人已添加");
+                        loadContacts();
+                    };
+                }
+            };
+        }
+
+        function deleteContact(phone) {
+            var transaction = db.transaction(["contacts"], "readwrite");
+            var objectStore = transaction.objectStore("contacts");
+            var request = objectStore.delete(phone);
+            request.onsuccess = function() {
+                loadContacts();
+            };
+            request.onerror = function() {
+                alert("删除联系人失败");
+            };
+        }
+
+        addButton.addEventListener("click", addContact);
+    </script>
+</body>
+</html>

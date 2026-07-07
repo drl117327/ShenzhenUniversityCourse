@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数字排序</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      width: 30%;
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 300px;
+    }
+    li {
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #f4f4f4;
+      border: 1px solid #ddd;
+      cursor: grab;
+    }
+    .dragging { opacity: 0.5; }
+    .hover { border: 2px dashed #007BFF; }
+    #reset-order {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #reset-order:hover { background-color: #0056b3; }
+    #order-display { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>数字排序</h1>
+    <ul id="sortable-list">
+      <li draggable="true" data-value="1">1</li>
+      <li draggable="true" data-value="2">2</li>
+      <li draggable="true" data-value="3">3</li>
+      <li draggable="true" data-value="4">4</li>
+    </ul>
+    <button id="reset-order">重置顺序</button>
+    <p id="order-display">当前顺序=1,2,3,4</p>
+  </div>
+  <script>
+    // 这里写js代码，不要删除此行注释
+    var list = document.getElementById("sortable-list");
+    var orderDisplay = document.getElementById("order-display");
+    var resetButton = document.getElementById("reset-order");
+    var originalOrder = [1, 2, 3, 4];
+    var draggedItem = null;
+
+    function updateOrderDisplay() {
+      var items = list.querySelectorAll("li");
+      var order = [];
+      items.forEach(function(item) {
+        order.push(item.getAttribute("data-value"));
+      });
+      orderDisplay.textContent = "当前顺序=" + order.join(",");
+    }
+
+    function resetList() {
+      list.innerHTML = "";
+      originalOrder.forEach(function(val) {
+        var li = document.createElement("li");
+        li.setAttribute("draggable", "true");
+        li.setAttribute("data-value", val);
+        li.textContent = val;
+        list.appendChild(li);
+      });
+      addDragEvents();
+      updateOrderDisplay();
+    }
+
+    function addDragEvents() {
+      var items = list.querySelectorAll("li");
+      items.forEach(function(item) {
+        item.addEventListener("dragstart", function(e) {
+          draggedItem = item;
+          item.classList.add("dragging");
+        });
+
+        item.addEventListener("dragover", function(e) {
+          e.preventDefault();
+          item.classList.add("hover");
+        });
+
+        item.addEventListener("drop", function(e) {
+          e.preventDefault();
+          if (draggedItem !== item) {
+            var allItems = Array.from(list.querySelectorAll("li"));
+            var draggedIndex = allItems.indexOf(draggedItem);
+            var targetIndex = allItems.indexOf(item);
+            if (draggedIndex < targetIndex) {
+              list.insertBefore(draggedItem, item.nextSibling);
+            } else {
+              list.insertBefore(draggedItem, item);
+            }
+          }
+          item.classList.remove("hover");
+          draggedItem.classList.remove("dragging");
+          updateOrderDisplay();
+          var order = [];
+          list.querySelectorAll("li").forEach(function(i) {
+            order.push(i.getAttribute("data-value"));
+          });
+          console.log("列表已更新=" + order.join(","));
+        });
+
+        item.addEventListener("dragend", function() {
+          item.classList.remove("dragging");
+        });
+
+        item.addEventListener("dragleave", function() {
+          item.classList.remove("hover");
+        });
+      });
+    }
+
+    addDragEvents();
+
+    resetButton.addEventListener("click", function() {
+      resetList();
+      console.log("列表已重置=" + originalOrder.join(","));
+    });
+  </script>
+</body>
+</html>

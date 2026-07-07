@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星级评分系统</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .container { text-align: center; }
+        .star-container { display: inline-flex; position: relative; }
+        .star {
+            font-size: 40px;
+            color: gray;
+            cursor: pointer;
+            position: relative;
+        }
+        .star .half, .star .full {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: gold;
+            overflow: hidden;
+            display: none;
+        }
+        .half { width: 50%; }
+        .full { width: 100%; }
+        #rating-display { font-size: 20px; margin-top: 20px; }
+        #reset-rating {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #reset-rating:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="star-container">
+        <span class="star" data-value="1">★<span class="half">★</span><span class="full">★</span></span>
+        <span class="star" data-value="2">★<span class="half">★</span><span class="full">★</span></span>
+        <span class="star" data-value="3">★<span class="half">★</span><span class="full">★</span></span>
+        <span class="star" data-value="4">★<span class="half">★</span><span class="full">★</span></span>
+        <span class="star" data-value="5">★<span class="half">★</span><span class="full">★</span></span>
+    </div>
+    <p id="rating-display">当前评分=0星</p>
+    <button id="reset-rating">重置评分</button>
+</div>
+<script>
+    // 这里开始写JS代码
+    var stars = document.querySelectorAll(".star");
+    var ratingDisplay = document.getElementById("rating-display");
+    var resetButton = document.getElementById("reset-rating");
+    var currentRating = 0;
+
+    function calculateHoverRating(event, star) {
+        var rect = star.getBoundingClientRect();
+        var clickPosition = event.clientX - rect.left;
+        var starValue = parseFloat(star.getAttribute("data-value"));
+        if (clickPosition < rect.width / 2) {
+            return starValue - 0.5;
+        } else {
+            return starValue;
+        }
+    }
+
+    function highlightStars(rating) {
+        stars.forEach(function(star) {
+            var starValue = parseFloat(star.getAttribute("data-value"));
+            var fullEl = star.querySelector(".full");
+            var halfEl = star.querySelector(".half");
+            if (starValue <= rating) {
+                fullEl.style.display = "block";
+                halfEl.style.display = "none";
+            } else if (starValue === rating + 0.5) {
+                fullEl.style.display = "none";
+                halfEl.style.display = "block";
+            } else {
+                fullEl.style.display = "none";
+                halfEl.style.display = "none";
+            }
+        });
+    }
+
+    function updateRatingDisplay() {
+        ratingDisplay.textContent = "当前评分=" + currentRating + "星";
+    }
+
+    function resetStars() {
+        stars.forEach(function(star) {
+            star.querySelector(".half").style.display = "none";
+            star.querySelector(".full").style.display = "none";
+        });
+    }
+
+    stars.forEach(function(star) {
+        star.addEventListener("mousemove", function(event) {
+            var rating = calculateHoverRating(event, star);
+            highlightStars(rating);
+        });
+
+        star.addEventListener("mouseout", function() {
+            highlightStars(currentRating);
+        });
+
+        star.addEventListener("click", function(event) {
+            currentRating = calculateHoverRating(event, star);
+            updateRatingDisplay();
+            console.log("评分=" + currentRating);
+        });
+    });
+
+    resetButton.addEventListener("click", function() {
+        currentRating = 0;
+        updateRatingDisplay();
+        resetStars();
+        console.log("评分已重置");
+    });
+</script>
+</body>
+</html>

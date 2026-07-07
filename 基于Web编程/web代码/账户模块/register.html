@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 在线学习平台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 460px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: #fff;
+            font-size: 28px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-group label .required {
+            color: #e53e3e;
+            margin-left: 2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
+            background: #fafbfc;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            background: #fff;
+        }
+
+        .form-group input.error {
+            border-color: #e53e3e;
+            background: #fff5f5;
+        }
+
+        .form-group input.success {
+            border-color: #38a169;
+            background: #f0fff4;
+        }
+
+        .status-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            display: none;
+        }
+
+        .status-icon.show {
+            display: block;
+        }
+
+        .msg {
+            font-size: 12px;
+            margin-top: 5px;
+            min-height: 18px;
+        }
+
+        .msg.error {
+            color: #e53e3e;
+        }
+
+        .msg.success {
+            color: #38a169;
+        }
+
+        /* Password strength bar */
+        .strength-section {
+            margin-top: 6px;
+        }
+
+        .strength-bar-outer {
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .strength-bar-inner {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: width 0.35s, background 0.35s;
+        }
+
+        .strength-bar-inner.weak    { width: 25%; background: #e53e3e; }
+        .strength-bar-inner.medium  { width: 55%; background: #ed8936; }
+        .strength-bar-inner.strong  { width: 80%; background: #38a169; }
+        .strength-bar-inner.very-strong { width: 100%; background: #2f855a; }
+
+        .strength-label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 22px 0;
+        }
+
+        .agreement input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            accent-color: #667eea;
+            flex-shrink: 0;
+        }
+
+        .agreement label {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .agreement label a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: opacity 0.25s, transform 0.15s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result-toast {
+            display: none;
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 18px;
+        }
+
+        .result-toast.show {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .result-toast.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .result-toast.error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .container { padding: 28px 22px; }
+            .header h1 { font-size: 19px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-icon">&#x1F393;</div>
+            <h1>注册账号</h1>
+            <p>加入在线学习平台，开启学习之旅</p>
+        </div>
+
+        <form id="reg-form" novalidate>
+            <!-- 用户名 -->
+            <div class="form-group">
+                <label for="username">用户名<span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" placeholder="3-20位字母、数字或下划线" autocomplete="username">
+                    <span class="status-icon" id="username-icon"></span>
+                </div>
+                <div class="msg" id="username-msg"></div>
+            </div>
+
+            <!-- 邮箱 -->
+            <div class="form-group">
+                <label for="email">邮箱<span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="请输入有效邮箱地址" autocomplete="email">
+                    <span class="status-icon" id="email-icon"></span>
+                </div>
+                <div class="msg" id="email-msg"></div>
+            </div>
+
+            <!-- 密码 -->
+            <div class="form-group">
+                <label for="password">密码<span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="至少8位，含大小写字母和数字" autocomplete="new-password">
+                    <span class="status-icon" id="password-icon"></span>
+                </div>
+                <div class="strength-section">
+                    <div class="strength-bar-outer">
+                        <div class="strength-bar-inner" id="strength-bar-inner"></div>
+                    </div>
+                    <div class="strength-label" id="strength-label"></div>
+                </div>
+                <div class="msg" id="password-msg"></div>
+            </div>
+
+            <!-- 确认密码 -->
+            <div class="form-group">
+                <label for="confirm">确认密码<span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="password" id="confirm" placeholder="请再次输入密码" autocomplete="new-password">
+                    <span class="status-icon" id="confirm-icon"></span>
+                </div>
+                <div class="msg" id="confirm-msg"></div>
+            </div>
+
+            <!-- 协议勾选 -->
+            <div class="agreement">
+                <input type="checkbox" id="agree">
+                <label for="agree">我已阅读并同意<a href="#">《用户服务协议》</a>和<a href="#">《隐私政策》</a></label>
+            </div>
+            <div class="msg" id="agree-msg"></div>
+
+            <button type="submit" class="btn-submit">注 册</button>
+        </form>
+
+        <div class="result-toast" id="result-toast"></div>
+
+        <div class="login-link">
+            已有账号？<a href="login.html">立即登录</a>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ========== DOM 引用 ==========
+        var form       = document.getElementById('reg-form');
+        var username   = document.getElementById('username');
+        var email      = document.getElementById('email');
+        var password   = document.getElementById('password');
+        var confirm    = document.getElementById('confirm');
+        var agree      = document.getElementById('agree');
+
+        var strengthInner = document.getElementById('strength-bar-inner');
+        var strengthLabel = document.getElementById('strength-label');
+
+        var resultToast  = document.getElementById('result-toast');
+
+        // ========== 辅助函数 ==========
+        function setState(input, iconId, msgId, status, text) {
+            input.className = status || '';
+            var icon = document.getElementById(iconId);
+            var msg  = document.getElementById(msgId);
+            if (icon) {
+                icon.className = 'status-icon' + (status ? ' show' : '');
+                icon.textContent = status === 'success' ? '✓' : (status === 'error' ? '✗' : '');
+            }
+            if (msg) {
+                msg.className = 'msg ' + (status || '');
+                msg.textContent = text || '';
+            }
+        }
+
+        function showToast(type, message) {
+            resultToast.className = 'result-toast show ' + type;
+            resultToast.textContent = message;
+        }
+
+        function escapeHTML(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        // ========== 用户名验证 ==========
+        function validateUsername() {
+            var val = username.value.trim();
+            if (!val) {
+                setState(username, 'username-icon', 'username-msg', 'error', '用户名不能为空');
+                console.log('用户名验证失败: 不能为空');
+                return false;
+            }
+            if (val.length < 3 || val.length > 20) {
+                setState(username, 'username-icon', 'username-msg', 'error', '用户名长度需在3-20个字符之间');
+                console.log('用户名验证失败: 长度不符合要求');
+                return false;
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(val)) {
+                setState(username, 'username-icon', 'username-msg', 'error', '用户名只能包含字母、数字和下划线');
+                console.log('用户名验证失败: 包含非法字符');
+                return false;
+            }
+            setState(username, 'username-icon', 'username-msg', 'success', '用户名可用');
+            console.log('用户名验证通过');
+            return true;
+        }
+
+        // ========== 邮箱验证 ==========
+        function validateEmail() {
+            var val = email.value.trim();
+            if (!val) {
+                setState(email, 'email-icon', 'email-msg', 'error', '邮箱不能为空');
+                console.log('邮箱验证失败: 不能为空');
+                return false;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                setState(email, 'email-icon', 'email-msg', 'error', '邮箱格式不正确');
+                console.log('邮箱验证失败: 格式不正确');
+                return false;
+            }
+            setState(email, 'email-icon', 'email-msg', 'success', '邮箱格式正确');
+            console.log('邮箱验证通过');
+            return true;
+        }
+
+        // ========== 密码验证 + 强度 ==========
+        function validatePassword() {
+            var val = password.value;
+            if (!val) {
+                setState(password, 'password-icon', 'password-msg', 'error', '密码不能为空');
+                strengthInner.className = 'strength-bar-inner';
+                strengthLabel.textContent = '';
+                console.log('密码验证失败: 不能为空');
+                return false;
+            }
+            if (val.length < 8) {
+                setState(password, 'password-icon', 'password-msg', 'error', '密码长度至少8个字符');
+                console.log('密码验证失败: 长度不足');
+                return false;
+            }
+
+            // 强度评分
+            var score = 0;
+            if (val.length >= 8)  score++;
+            if (val.length >= 12) score++;
+            if (/[a-z]/.test(val)) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^a-zA-Z0-9]/.test(val)) score++;
+
+            var level = '';
+            if (score <= 2) {
+                strengthInner.className = 'strength-bar-inner weak';
+                level = '弱';
+            } else if (score === 3) {
+                strengthInner.className = 'strength-bar-inner medium';
+                level = '中';
+            } else if (score === 4) {
+                strengthInner.className = 'strength-bar-inner strong';
+                level = '强';
+            } else {
+                strengthInner.className = 'strength-bar-inner very-strong';
+                level = '非常强';
+            }
+            strengthLabel.textContent = '密码强度：' + level;
+
+            setState(password, 'password-icon', 'password-msg', 'success', '密码强度合格');
+            console.log('密码验证通过: 强度 - ' + level);
+
+            // 如果确认密码已有值，联动验证
+            if (confirm.value) validateConfirm();
+            return true;
+        }
+
+        // ========== 确认密码验证 ==========
+        function validateConfirm() {
+            var val = confirm.value;
+            if (!val) {
+                setState(confirm, 'confirm-icon', 'confirm-msg', 'error', '请再次输入密码');
+                console.log('确认密码验证失败: 不能为空');
+                return false;
+            }
+            if (val !== password.value) {
+                setState(confirm, 'confirm-icon', 'confirm-msg', 'error', '两次输入的密码不一致');
+                console.log('确认密码验证失败: 密码不一致');
+                return false;
+            }
+            setState(confirm, 'confirm-icon', 'confirm-msg', 'success', '密码一致');
+            console.log('确认密码验证通过');
+            return true;
+        }
+
+        // ========== 协议验证 ==========
+        function validateAgree() {
+            var msg = document.getElementById('agree-msg');
+            if (!agree.checked) {
+                msg.className = 'msg error';
+                msg.textContent = '请先同意用户协议和隐私政策';
+                return false;
+            }
+            msg.className = 'msg';
+            msg.textContent = '';
+            return true;
+        }
+
+        // ========== 事件绑定 ==========
+        username.addEventListener('blur',  validateUsername);
+        username.addEventListener('input', function() {
+            if (username.classList.contains('error')) validateUsername();
+        });
+
+        email.addEventListener('blur',  validateEmail);
+        email.addEventListener('input', function() {
+            if (email.classList.contains('error')) validateEmail();
+        });
+
+        password.addEventListener('blur',  validatePassword);
+        password.addEventListener('input', validatePassword);
+
+        confirm.addEventListener('blur',  validateConfirm);
+        confirm.addEventListener('input', validateConfirm);
+
+        // ========== 表单提交 ==========
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('===== 表单提交事件触发 =====');
+
+            var v1 = validateUsername();
+            var v2 = validateEmail();
+            var v3 = validatePassword();
+            var v4 = validateConfirm();
+            var v5 = validateAgree();
+
+            if (v1 && v2 && v3 && v4 && v5) {
+                console.log('表单验证全部通过');
+
+                // 模拟注册（实际项目中发 AJAX 请求到后端）
+                var userData = {
+                    username: username.value.trim(),
+                    email: email.value.trim(),
+                    // 密码在实际项目中经过哈希后传输
+                    timestamp: new Date().toISOString()
+                };
+                console.log('注册数据:', userData);
+
+                showToast('success', '注册成功！欢迎加入在线学习平台！');
+                form.reset();
+                strengthInner.className = 'strength-bar-inner';
+                strengthLabel.textContent = '';
+                // 清除所有验证状态
+                [username, email, password, confirm].forEach(function(el) {
+                    el.className = '';
+                });
+                ['username-msg','email-msg','password-msg','confirm-msg','agree-msg'].forEach(function(id) {
+                    var m = document.getElementById(id);
+                    if (m) { m.className = 'msg'; m.textContent = ''; }
+                });
+            } else {
+                console.log('表单验证失败');
+                showToast('error', '请检查并修正表单中的错误信息');
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

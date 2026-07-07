@@ -1,0 +1,55 @@
+页面结构：创建一个基础HTML文档，使用<html>、<head>、<body>等标签。
+在<head>中设置页面的标题为“独立盒子布局页面”，并在<meta>标签中指定字符集为UTF-8。
+使用头部CSS方式设置样式。
+创建独立盒子布局：
+在<body>中，创建一个包含多个盒子的容器。
+使用<div>标签创建一个容器，给它分配一个ID选择器#box-container。
+在容器中创建三个盒子，使用<div>标签，每个盒子分配类选择器.box。
+每个盒子应包含不同的内容，例如文本、图片等。
+盒子1: 包含一段文字内容。
+盒子2: 包含一个图片元素。
+盒子3: 包含按钮元素。
+样式声明：
+使用头部CSS方式定义盒子的样式和布局。
+使用*通配选择器设置基本字体，font-family: Arial。
+使用类选择器.box为所有盒子设置相同的宽度和高度，width: 200px; height: 200px。
+使用ID选择器#box-container设置容器的布局样式，float: right来创建靠右排列的盒子布局。
+为每个盒子设置不同的边框样式：
+盒子1：（border: 2px solid black;）。
+盒子2：（border: 1px solid gray; padding: 10px; ）。
+盒子3：（border: 2px dashed blue; margin: 20px;）。
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>独立盒子布局页面</title>
+    <style>
+        <!--CSS部分代码 -->
+   </style>
+</head>
+<body>
+
+    <!-- 创建盒子容器 -->
+    <div id="box-container">
+        
+        <!-- 盒子1：包含文字内容 -->
+        <div class="box">
+            <p>这是盒子1的文字内容。</p>
+        </div>
+
+        <!-- 盒子2：包含图片 -->
+        <div class="box">
+            <img src="https://th.bing.com/th?id=OIP.r2scpVS75-Fva4OP8XT1QgHaE7&w=306&h=204&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="示例图片" style="width: 100%; height: 100%;">
+        </div>
+
+        <!-- 盒子3：包含按钮 -->
+        <div class="box">
+            <button>点击我</button>
+        </div>
+
+    </div>
+
+</body>
+</html>

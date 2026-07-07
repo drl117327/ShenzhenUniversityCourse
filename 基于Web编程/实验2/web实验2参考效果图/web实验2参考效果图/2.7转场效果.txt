@@ -1,0 +1,44 @@
+图片容器存在性与尺寸：
+`.image-container` 容器的宽度设置为 300px，高度为 200px。
+确保容器的 `overflow` 属性设置为 `hidden`，以隐藏超出容器的内容。
+`.image-container` 容器应设置为 `position: relative`，以便子元素正确定位。
+图片初始状态：
+初始状态下，第一张图片（苹果图片）应显示在视口中（`transform: translateX(0)` 且 `opacity: 1`）。
+第二张图片（菠萝图片）应在视口外（`transform: translateX(100%)` 且 `opacity: 0`）。
+所有图片元素应设置为 `position: absolute`，确保其相对于父级容器进行定位。
+初始时，`.image` 元素的 `left` 和 `top` 属性应设置为 `0`，使图片完全对齐容器的左上角。
+鼠标悬停后图片切换：
+鼠标悬停时，第一张图片平滑滑出并淡出，第二张图片平滑滑入并淡入（使用 `transform` 和 `opacity` 属性进行平滑过渡）。
+鼠标移开后的复位：
+当鼠标移开时，两张图片恢复到初始状态，第一张图片回到视口并显示，第二张图片滑出并隐藏。
+CSS `transition` 动画属性：
+确保 `transition` 属性设置正确，过渡时长为 1 秒，并且缓动函数使用 `ease-in-out`。
+CSS 动画自动切换（可选）：
+在 `.automatic` 类的容器上，实现基于 `@keyframes` 的自动切换效果。第一张图片滑出并淡出，第二张图片滑入并淡入，动画时长为 5 秒，每隔 2.5 秒切换图片。
+滑动动画流畅性：
+确保整个滑动动画执行流畅，无卡顿或跳动现象
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Fade Transition Effect</title>
+  </head>
+  <body>
+    <h1>Image Fade Transition Effect</h1>
+
+    <div class="image-container">
+      <img
+        src="http://172.31.233.204/resource/img/apple.jpg"
+        alt="First Image"
+        class="image first-image"
+      />
+      <img
+        src="http://172.31.233.204/resource/img/pineapple.jpg"
+        alt="Second Image"
+        class="image second-image"
+      />
+    </div>
+  </body>
+</html>

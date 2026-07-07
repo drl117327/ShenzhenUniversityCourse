@@ -1,0 +1,38 @@
+CSS基础设置
+使用通配符 * 设置所有元素的 margin 和 padding 为 0，box-sizing 为 border-box。
+设置 body 的布局为居中，并定义背景颜色为浅灰色（#f0f0f0）。
+创建 .button-container 类，为其添加 perspective 属性，以增强3D效果。
+按钮样式
+创建 .animated-button 类，设置 padding、font-size、background-color 为蓝色（#3498db），并添加边框圆角和阴影效果（0 10px 20px rgba(0, 0, 0, 0.2)）。
+设置 cursor 为 pointer 和 transition 为 all 0.3s ease。
+悬停效果
+使用 .animated-button:hover 选择器，修改 background-color 为绿色（#2ecc71），并应用 transform 属性，使按钮上升10px。
+增强阴影效果，添加一个额外的阴影。
+点击效果
+使用 .animated-button:active 选择器，设置背景颜色为红色（#e74c3c），并使用 transform 属性缩小到98%。
+修改阴影，减少阴影效果。
+物品图标移动效果
+在 .animated-button:active .item 选择器中，设置 opacity 为 1，使用 transform 属性使图标移动到购物车位置并旋转。
+CSS伪元素设计
+使用 .animated-button::before 选择器，添加一个半透明背景，设置 opacity 和 transform 以实现动画效果。
+在悬停和点击时，调整伪元素的 opacity 和 transform，以增加视觉效果。
+测试动画效果
+打开浏览器并加载页面，确保鼠标悬停和点击的动画效果流畅且符合预期。
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Shopping Cart Animation</title>
+</head>
+<body>
+    <div class="cart-icon">购物车</div> <!-- 购物车图标 -->
+    <div class="button-container">
+        <button class="animated-button">
+            Add to Cart
+            <span class="item">物品</span> <!-- 物品图标 -->
+        </button>
+    </div>
+</body>
+</html>

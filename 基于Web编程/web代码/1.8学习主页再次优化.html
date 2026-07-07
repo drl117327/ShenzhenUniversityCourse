@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的学习主页优化</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: 'Microsoft YaHei', Arial, sans-serif; background: #f5f7fa; }
+      .site-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 15px 30px; background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      .logo { font-size: 1.5em; font-weight: bold; }
+      .nav-list { display: flex; list-style: none; gap: 20px; }
+      .nav-item a {
+        color: #fff; text-decoration: none; display: flex; align-items: center;
+        padding: 8px 12px; border-radius: 6px; transition: background 0.3s;
+      }
+      .nav-item a:hover { background: rgba(255,255,255,0.2); }
+      .icon { width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; fill: currentColor; }
+      .my-info { position: relative; }
+      .personal-card {
+        display: none; position: absolute; top: 100%; right: 0;
+        background: #fff; color: #333; padding: 15px; border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 200px; z-index: 100;
+      }
+      .my-info:hover .personal-card { display: block; }
+      .main-container { display: flex; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 20px; }
+      .side-menu { width: 200px; flex-shrink: 0; }
+      .side-menu-list { list-style: none; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+      .side-menu-item a {
+        display: block; padding: 12px 20px; color: #333; text-decoration: none;
+        transition: all 0.3s; border-left: 3px solid transparent;
+      }
+      .side-menu-item.active a, .side-menu-item a:hover {
+        background: #667eea; color: #fff; border-left-color: #764ba2;
+      }
+      .main-content { flex: 1; }
+      .carousel-container { margin-bottom: 30px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+      .carousel-track { display: flex; transition: transform 0.5s ease; }
+      .carousel-item {
+        min-width: 100%; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 40px; color: #fff; min-height: 250px;
+      }
+      .carousel-item:nth-child(1) { background: linear-gradient(135deg, #f093fb, #f5576c); }
+      .carousel-item:nth-child(2) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+      .carousel-item:nth-child(3) { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+      .carousel-item h2 { font-size: 2.5rem; margin-bottom: 10px; }
+      .carousel-item p { font-size: 16px; }
+      .module-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+      .module-item {
+        background: #fff; border-radius: 10px; padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.3s;
+      }
+      .module-item:hover { transform: translateY(-5px); }
+      .module-title { font-size: 1.3em; color: #333; margin-bottom: 10px; }
+      .module-description { color: #666; font-size: 14px; margin-bottom: 15px; }
+      .module-btn {
+        padding: 8px 20px; background: #667eea; color: #fff; border: none;
+        border-radius: 5px; cursor: pointer; transition: background 0.3s;
+      }
+      .module-btn:hover { background: #5568d3; }
+      .site-footer {
+        text-align: center; padding: 20px; color: #999; font-size: 14px;
+        margin-top: 40px; border-top: 1px solid #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo" id="realid">我的学习</div>
+      <nav class="fruit-nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="#">
+              <svg class="icon" viewBox="0 0 1024 1024"><path d="M946.5 505L534.6 93.4c-12.5-12.5-32.7-12.5-45.2 0L77.5 505c-12 12-18.8 28.3-18.8 45.3 0 35.3 28.7 64 64 64h43v340c0 17.7 14.3 32 32 32h224c17.7 0 32-14.3 32-32V614h192v330c0 17.7 14.3 32 32 32h224c17.7 0 32-14.3 32-32V614h43c17 0 33.3-6.7 45.3-18.8 24.9-25 24.9-65.5-.1-90.5z"/></svg>
+              主页
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <svg class="icon" viewBox="0 0 1024 1024"><path d="M928 160H96c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h832c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 632H136V232h752v560zM304 544h416v64H304v-64zm0-128h416v64H304v-64z"/></svg>
+              课程
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <svg class="icon" viewBox="0 0 1024 1024"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zM720 200H304v144h416V200zm0 224H304v144h416V424zM304 632h416v144H304V632z"/></svg>
+              笔记
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#">
+              <svg class="icon" viewBox="0 0 1024 1024"><path d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-16 720H160V176h704v656zM480 512h64v128h128v64H480V512z"/></svg>
+              工具
+            </a>
+          </li>
+          <li class="nav-item my-info">
+            <a href="#">
+              <svg class="icon" viewBox="0 0 1024 1024"><path d="M858.5 763.6a374 374 0 0 0-80.6-119.5 375.63 375.63 0 0 0-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 0 0-80.6 119.5A371.7 371.7 0 0 0 136 901.8a8 8 0 0 0 8 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9Culk3 772.7 918 644.3 920 567.1c.1-4.4 3.6-7.8 8-7.8h60a8 8 0 0 0 8-8.2c-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z"/></svg>
+              我的
+            </a>
+            <div class="personal-card">
+              <p><strong>姓名：</strong>张三</p>
+              <p><strong>学号：</strong>123456</p>
+              <p><strong>邮箱：</strong>zhangsan@example.com</p>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div class="main-container">
+      <div class="layout-container">
+        <aside class="side-menu">
+          <ul class="side-menu-list">
+            <li class="side-menu-item active"><a href="#">课程分类</a></li>
+            <li class="side-menu-item"><a href="#">学习路径</a></li>
+            <li class="side-menu-item"><a href="#">资源导航</a></li>
+            <li class="side-menu-item"><a href="#">实用工具</a></li>
+          </ul>
+        </aside>
+      </div>
+      <main class="main-content">
+        <div class="carousel-container">
+          <div class="carousel">
+            <div class="carousel-track">
+              <div class="carousel-item"><h2>HTML 基础</h2><p>了解 HTML 的基本语法和结构。</p></div>
+              <div class="carousel-item"><h2>CSS 入门</h2><p>学习如何使用 CSS 样式化网页。</p></div>
+              <div class="carousel-item"><h2>JavaScript 基础</h2><p>掌握基本的 JavaScript 编程技能。</p></div>
+            </div>
+          </div>
+        </div>
+        <section class="module-items">
+          <div class="module-item"><div class="module-info"><h3 class="module-title">HTML 基础</h3><p class="module-description">了解 HTML 的基本语法和结构。</p><button class="module-btn">开始学习</button></div></div>
+          <div class="module-item"><div class="module-info"><h3 class="module-title">CSS 入门</h3><p class="module-description">学习如何使用 CSS 样式化网页。</p><button class="module-btn">开始学习</button></div></div>
+          <div class="module-item"><div class="module-info"><h3 class="module-title">JavaScript 基础</h3><p class="module-description">掌握基本的 JavaScript 编程技能。</p><button class="module-btn">开始学习</button></div></div>
+        </section>
+      </main>
+    </div>
+    <footer class="site-footer">
+      <p>版权所有 &copy; 2024 我的学习</p>
+    </footer>
+    <script>
+      var currentIndex = 0;
+      var track = document.querySelector(".carousel-track");
+      var items = document.querySelectorAll(".carousel-item");
+      setInterval(function() {
+        currentIndex = (currentIndex + 1) % items.length;
+        track.style.transform = "translateX(-" + (currentIndex * 100) + "%)";
+      }, 3000);
+    </script>
+  </body>
+</html>

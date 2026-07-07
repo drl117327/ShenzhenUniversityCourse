@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Step 1: 定义数组并使用循环生成数据
+        var numbers = [];
+        for (var i = 1; i <= 10; i++) {
+            numbers.push(i * i);
+        }
+
+        // Step 2: 定义计算数组总和的函数
+        function calculateSum(arr) {
+            var sum = 0;
+            for (var i = 0; i < arr.length; i++) {
+                sum += arr[i];
+            }
+            return sum;
+        }
+
+        // Step 3: 计算总和并输出结果
+        var totalSum = calculateSum(numbers);
+        console.log(numbers);
+        console.log("Total sum:", totalSum);
+    </script>
+</body>
+</html>

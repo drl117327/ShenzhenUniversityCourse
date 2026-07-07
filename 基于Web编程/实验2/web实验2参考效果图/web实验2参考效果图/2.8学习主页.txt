@@ -1,0 +1,297 @@
+CSS部分
+顶部导航栏
+.header设置固定定位，顶部距离为0。
+.header标签，设置背景颜色为 #3a86ff，文字颜色为白色，添加阴影效果 0 2px 8px rgba(0,0,0,0.16)。
+.header-container设置弹性布局，justify-content为space-between。
+页眉中的导航菜单内的 ul 使用 flex 布局，使用 justify-content 属性使导航菜单项居中显示。
+导航菜单项设置为 block 元素，内边距为 6px 15px，圆角为 4px，hover 效果设置背景色为 rgba(255, 255, 255, 0.2)。
+主内容区
+主容器（.dashboard-container）应使用 display: flex，实现三栏布局并居中显示，margin设置为 74px auto 20px，最大宽度设置为1400px。
+左右列宽度要求：左侧边栏宽度为 300px，右侧工具栏宽度为 280px，中间内容区设置 flex: 1。
+左侧边栏（.sidebar）设置为粘性定位（sticky），距顶部74px，设置高度为视口高度减去100px。
+中间区域（.main-content）设置为弹性（flex）布局，方向为竖直方向，设置flex:1。
+排行榜徽章 .rank-badge 设置宽高均为 28px，圆角为 50%，使用 flex 布局，水平垂直居中对齐。
+排行榜项 .ranking-item 设置为 grid 网格布局，三列宽度用 grid-template-columns 设置为 100px 1fr 80px。
+通知面板 .notification-panel 设置背景颜色为白色，宽度为 280px，圆角为 8px，添加阴影 0 4px 12px rgba(0, 0, 0, 0.08)，内边距设为 20px。
+悬浮按钮 .floating-actions 固定在右下角，距底部 30px，距右侧 30px。
+按钮 .floart-btn 为圆形，尺寸为 50px×50px，边框圆角为 50%。
+响应式设计要求：当宽度小于 1000px 时，三栏布局变为单栏布局。
+HTML部分
+课程概览模块
+HTML结构: 每个模块卡片需创建四个带有 "card statistic-card" 类的 div 元素。卡片内创建一个带有 "card-content" 类的 div 用于显示模块信息；另创建一个 "card-icon" 类的 div 显示图标。
+.card-content 内需包含：
+h3.card-title：卡片标题（如 "学习总分"）
+div.card-value：显示数值（如 "90.52"）
+div.card-detail：详细说明（如 "超过了班级60%的同学"）
+图标容器 .card-icon 内含一个 i 元素，使用适当 Font Awesome 类（如 fas fa-graduation-cap）。
+模块卡片布局:
+.card 使用 flex 布局，内容与图标在一行显示
+.card-content 占据主要空间
+.card-icon 位于卡片右侧
+样式与悬停效果:
+.card：背景白色，圆角8px，阴影 0 4px 12px rgba(0, 0, 0, 0.08)，最小宽度200px，过渡0.3s
+.card:hover：上移-4px，阴影增强为 0 8px 16px rgba(0, 0, 0, 0.1)
+.card-title：文字大小 14px，颜色 #59636f，底部间距 10px
+.card-value：文字大小 24px，加粗，颜色 #12263f，底部间距 5px
+.card-detail：文字大小 12px，颜色 #8392a5
+.card-icon：绝对定位，顶部 50%，右侧 20px，Y轴平移 -50% 实现垂直居中，字体大小 40px，透明度 0.2，颜色 #3a86ff
+通知面板模块
+结构：创建一个带有 "notification-panel" 类的 div 容器，内含：
+h3：标题 "通知"
+div.notification-list：用于包含所有通知项
+每个通知项使用 div.notification-item，包含两部分：
+div.notification-icon：内含 Font Awesome 图标（i）
+div.notification-content：内含一段 h5 文本和一个 span.notification-time 时间标签
+通知样式：
+.notification-panel：背景白色，圆角 8px，阴影 0 4px 12px rgba(0, 0, 0, 0.08)，内边距 20px
+.notification-list：flex 布局，方向 column，间距 10px
+.notification-item：flex 布局，内边距 10px，圆角 8px，背景色 #f5f8fa，hover 背景色为 #e0ebff，过渡 0.3s
+.notification-icon：宽高 40px，圆形背景 #e0ebff，文字颜色 #3a86ff，居中显示，右外边距 10px
+.notification-content h5：字体大小 13px，底部间距 3px
+.notification-time：字体大小 12px，颜色 #8392a5
+页脚模块
+20. 页脚结构
+
+创建一个带有 "footer" 类的 <footer> 元素。
+在 footer 内创建一个带有 "footer-bottom" 类的 <div> 容器。
+在 footer-bottom 内放置一个 <h5> 元素，包含文本 © 2025 web课程。
+21. 页脚样式
+
+.footer：背景颜色为 #12263f，文字颜色为白色，顶部内边距为 40px，顶部外边距为 40px。
+.footer-bottom：上边框为 1px solid rgba(255, 255, 255, 0.1)，内边距为 15px 0，文字居中对齐，顶部外边距为 20px，文字大小为 13px，颜色为 rgba(255, 255, 255, 0.5)。
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的学习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f2f7ff;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* TODO 基于实验要求补充缺少的CSS */
+    </style>
+</head>
+
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="header-container">
+            <h3>web课程</h3>
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#" class="active">首页</a></li>
+                    <li class="nav-item"><a href="#">我的学习</a></li>
+                    <li class="nav-item"><a href="#">在线课堂</a></li>
+                    <li class="nav-item"><a href="#">学习社区</a></li>
+                    <li class="nav-item"><a href="#">知识中心</a></li>
+                    <li class="nav-item"><a href="#">我的测试</a></li>
+                    <li class="nav-item"><a href="#">活动中心</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <div class="user-menu">
+                    <img src="http://172.31.233.204/resource/img/earth.png" alt="用户头像" class="user-avatar">
+                    <span class="user-name">张三</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <div class="dashboard-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>学习进度</h3>
+            </div>
+            <div class="progress-list">
+                <div class="progress-card active">
+                    <i class="fas fa-check-circle progress-icon completed"></i>
+                    <div class="progress-info">
+                        <h4>面向对象程序设计基本概念</h4>
+                        <div class="progress-meta">
+                            <span class="progress-duration">已完成 - 3小时20分</span>
+                            <span class="progress-score">92.5%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-card">
+                    <i class="fas fa-check-circle progress-icon completed"></i>
+                    <div class="progress-info">
+                        <h4>学习计算机技术在教育中的应用</h4>
+                        <div class="progress-meta">
+                            <span class="progress-duration">已完成 - 1小时45分</span>
+                            <span class="progress-score">85%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-card">
+                    <i class="fas fa-check-circle progress-icon completed"></i>
+                    <div class="progress-info">
+                        <h4>课程设计方法与技术实现</h4>
+                        <div class="progress-meta">
+                            <span class="progress-duration">已完成 - 2小时30分</span>
+                            <span class="progress-score">88.7%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-card">
+                    <i class="fas fa-circle progress-icon pending"></i>
+                    <div class="progress-info">
+                        <h4>数据结构与算法入门</h4>
+                        <div class="progress-meta">
+                            <span class="progress-duration">未开始</span>
+                            <span class="progress-score">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-card">
+                    <i class="fas fa-circle progress-icon pending"></i>
+                    <div class="progress-info">
+                        <h4>前端开发框架实战</h4>
+                        <div class="progress-meta">
+                            <span class="progress-duration">未开始</span>
+                            <span class="progress-score">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 课程概览 -->
+            <!-- TODO 补充下面的HTML结构, 四个图标依次给出 -->
+             <!-- <i class="fas fa-graduation-cap"></i> -->
+              <!-- <i class="fas fa-clock"></i> -->
+              <!-- <i class="fas fa-chart-line"></i> -->
+              <!-- <i class="fas fa-coins"></i> -->
+            <section class="overview-cards">
+            </section>
+
+            <!-- 排行榜 -->
+            <section class="ranking-section">
+                <div class="section-header">
+                    <h2>学习排行榜</h2>
+                    <a href="#" class="view-more">查看更多 ></a>
+                </div>
+                <div class="ranking-container">
+                    <div class="ranking-header">
+                        <span class="rank-col">排名</span>
+                        <span class="student-col">学生</span>
+                        <span class="score-col">分数</span>
+                    </div>
+                    <div class="ranking-list">
+                        <div class="ranking-item">
+                            <div class="rank-col">
+                                <div class="rank-badge gold">1</div>
+                            </div>
+                            <div class="student-col">
+                                <img src="http://172.31.233.204/resource/img/earth.png" alt="学生头像">
+                                <div class="student-name">甲同学</div>
+                            </div>
+                            <div class="score-col">37</div>
+                        </div>
+                        
+                        <div class="ranking-item">
+                            <div class="rank-col">
+                                <div class="rank-badge silver">2</div>
+                            </div>
+                            <div class="student-col">
+                                <img src="http://172.31.233.204/resource/img/earth.png" alt="学生头像">
+                                <div class="student-name">乙同学</div>
+                            </div>
+                            <div class="score-col">37</div>
+                        </div>
+                        
+                        <div class="ranking-item">
+                            <div class="rank-col">
+                                <div class="rank-badge bronze">3</div>
+                            </div>
+                            <div class="student-col">
+                                <img src="http://172.31.233.204/resource/img/earth.png" alt="学生头像">
+                                <div class="student-name">丙同学</div>
+                            </div>
+                            <div class="score-col">32</div>
+                        </div>
+                        
+                        <div class="ranking-item">
+                            <div class="rank-col">
+                                <div class="rank-badge">4</div>
+                            </div>
+                            <div class="student-col">
+                                <img src="http://172.31.233.204/resource/img/earth.png" alt="学生头像">
+                                <div class="student-name">丁同学</div>
+                            </div>
+                            <div class="score-col">32</div>
+                        </div>
+                        
+                        <div class="ranking-item">
+                            <div class="rank-col">
+                                <div class="rank-badge">5</div>
+                            </div>
+                            <div class="student-col">
+                                <img src="http://172.31.233.204/resource/img/earth.png" alt="学生头像">
+                                <div class="student-name">王同学</div>
+                            </div>
+                            <div class="score-col">32</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 右侧通知栏 -->
+        <aside class="notification-panel">
+            <!-- 通知 -->
+            <!-- TODO 补充下面的HTML结构, 三个图标依次给出 -->
+             <!-- <i class="fas fa-bell"></i> -->
+             <!-- <i class="fas fa-calendar-check"></i> -->
+             <!-- <i class="fas fa-comment-alt"></i> -->
+        </aside>
+    </div>
+
+    <!-- 悬浮操作按钮 -->
+    <div class="floating-actions">
+        <button class="float-btn help-btn" title="帮助中心">
+            <i class="fas fa-question-circle"></i>
+        </button>
+        <button class="float-btn feedback-btn" title="反馈">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+        <button class="float-btn back-to-top" title="回到顶部">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <!-- 页脚 -->
+    <!-- TODO 补充下面的HTML结构 -->
+
+</body>
+
+</html> 

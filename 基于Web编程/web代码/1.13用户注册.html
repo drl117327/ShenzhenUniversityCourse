@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册表单</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eaa 0%, #354ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 2em; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 14px; transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+        .form-group input.error, .form-group select.error { border-color: #f56565; }
+        .form-group input.success, .form-group select.success { border-color: #48bb78; }
+        .error-message { color: #f56565; font-size: 12px; margin-top: 5px; display: none; }
+        .error-message.show { display: block; }
+        .success-message { color: #48bb78; font-size: 12px; margin-top: 5px; display: none; }
+        .success-message.show { display: block; }
+        .checkbox-group { display: flex; align-items: center; margin-bottom: 20px; }
+        .checkbox-group input { width: auto; margin-right: 8px; }
+        .checkbox-group label { font-weight: normal; margin: 0; }
+        .btn-submit {
+            width: 100%; padding: 14px; background: #667eea; color: white; border: none;
+            border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-submit:hover { background: #5568d3; transform: translateY(-2px); }
+        .result-message { margin-top: 20px; padding: 15px; border-radius: 5px; text-align: center; display: none; }
+        .result-message.success { background: #c6f6d5; color: #22543d; border: 2px solid #48bb78; }
+        .result-message.error { background: #fed7d7; color: #742a2a; border: 2px solid #f56565; }
+        .result-message.show { display: block; }
+        .password-strength { height: 5px; background: #ddd; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0; transition: all 0.3s; }
+        .password-strength-bar.weak { width: 33%; background: #f56565; }
+        .password-strength-bar.medium { width: 66%; background: #ed8936; }
+        .password-strength-bar.strong { width: 100%; background: #48bb78; }
+        .strength-text { font-size: 12px; margin-top: 3px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>用户注册</h1>
+        <form id="registration-form">
+            <div class="form-group">
+                <label for="username">用户名 *</label>
+                <input type="text" id="username" placeholder="请输入用户名 (3-20个字符)">
+                <div class="error-message" id="username-error"></div>
+                <div class="success-message" id="username-success">用户名格式正确</div>
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱 *</label>
+                <input type="email" id="email" placeholder="请输入邮箱">
+                <div class="error-message" id="email-error"></div>
+                <div class="success-message" id="email-success">邮箱格式正确</div>
+            </div>
+            <div class="form-group">
+                <label for="password">密码 *</label>
+                <input type="password" id="password" placeholder="请输入密码 (至少6个字符)">
+                <div class="password-strength"><div class="password-strength-bar" id="strength-bar"></div></div>
+                <div class="strength-text" id="strength-text"></div>
+                <div class="error-message" id="password-error"></div>
+                <div class="success-message" id="password-success">密码强度合格</div>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">确认密码 *</label>
+                <input type="password" id="confirm-password" placeholder="请再次输入密码">
+                <div class="error-message" id="confirm-password-error"></div>
+                <div class="success-message" id="confirm-password-success">密码一致</div>
+            </div>
+            <div class="form-group">
+                <label for="age">年龄 *</label>
+                <input type="number" id="age" placeholder="请输入年龄 (18-100)">
+                <div class="error-message" id="age-error"></div>
+                <div class="success-message" id="age-success">年龄有效</div>
+            </div>
+            <div class="form-group">
+                <label for="gender">性别 *</label>
+                <select id="gender">
+                    <option value="">请选择性别</option>
+                    <option value="male">男</option>
+                    <option value="female">女</option>
+                </select>
+                <div class="error-message" id="gender-error"></div>
+                <div class="success-message" id="gender-success">已选择</div>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="agree-terms">
+                <label for="agree-terms">我已阅读并同意用户协议</label>
+            </div>
+            <div class="error-message" id="terms-error"></div>
+            <button type="submit" class="btn-submit" id="submit-btn">注册</button>
+        </form>
+        <div class="result-message" id="result-message"></div>
+    </div>
+    <script>
+        // TODO: 在这里编写你的JavaScript代码，不要删除这行注释
+        var username = document.getElementById("username");
+        var email = document.getElementById("email");
+        var password = document.getElementById("password");
+        var confirmPassword = document.getElementById("confirm-password");
+        var age = document.getElementById("age");
+        var gender = document.getElementById("gender");
+        var agreeTerms = document.getElementById("agree-terms");
+        var form = document.getElementById("registration-form");
+        var resultMessage = document.getElementById("result-message");
+        var strengthBar = document.getElementById("strength-bar");
+        var strengthText = document.getElementById("strength-text");
+
+        function showError(input, errorEl, message) {
+            input.classList.add("error");
+            input.classList.remove("success");
+            errorEl.textContent = message;
+            errorEl.classList.add("show");
+        }
+
+        function hideError(input, errorEl) {
+            input.classList.remove("error");
+            errorEl.classList.remove("show");
+        }
+
+        function showSuccess(input, successEl) {
+            input.classList.add("success");
+            input.classList.remove("error");
+            successEl.classList.add("show");
+        }
+
+        function hideSuccess(successEl) {
+            successEl.classList.remove("show");
+        }
+
+        function showResultMessage(message, type) {
+            resultMessage.textContent = message;
+            resultMessage.className = "result-message show " + type;
+        }
+
+        function resetValidation() {
+            var inputs = document.querySelectorAll("input, select");
+            inputs.forEach(function(el) {
+                el.classList.remove("error", "success");
+            });
+            document.querySelectorAll(".error-message, .success-message").forEach(function(el) {
+                el.classList.remove("show");
+            });
+            strengthBar.className = "password-strength-bar";
+            strengthText.textContent = "";
+        }
+
+        function validateUsername() {
+            var val = username.value.trim();
+            var errEl = document.getElementById("username-error");
+            var sucEl = document.getElementById("username-success");
+            if (!val) {
+                showError(username, errEl, "用户名不能为空");
+                hideSuccess(sucEl);
+                console.log("用户名验证失败: 用户名不能为空");
+                return false;
+            }
+            if (val.length < 3 || val.length > 20) {
+                showError(username, errEl, "用户名长度必须在3-20个字符之间");
+                hideSuccess(sucEl);
+                console.log("用户名验证失败: 长度不符合要求");
+                return false;
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(val)) {
+                showError(username, errEl, "用户名只能包含字母、数字和下划线");
+                hideSuccess(sucEl);
+                console.log("用户名验证失败: 包含非法字符");
+                return false;
+            }
+            hideError(username, errEl);
+            showSuccess(username, sucEl);
+            console.log("用户名验证通过");
+            return true;
+        }
+
+        function validateEmail() {
+            var val = email.value.trim();
+            var errEl = document.getElementById("email-error");
+            var sucEl = document.getElementById("email-success");
+            if (!val) {
+                showError(email, errEl, "邮箱不能为空");
+                hideSuccess(sucEl);
+                console.log("邮箱验证失败: 邮箱不能为空");
+                return false;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                showError(email, errEl, "邮箱格式不正确");
+                hideSuccess(sucEl);
+                console.log("邮箱验证失败: 格式不正确");
+                return false;
+            }
+            hideError(email, errEl);
+            showSuccess(email, sucEl);
+            console.log("邮箱验证通过");
+            return true;
+        }
+
+        function validatePassword() {
+            var val = password.value;
+            var errEl = document.getElementById("password-error");
+            var sucEl = document.getElementById("password-success");
+            if (!val) {
+                showError(password, errEl, "密码不能为空");
+                hideSuccess(sucEl);
+                strengthBar.className = "password-strength-bar";
+                strengthText.textContent = "";
+                console.log("密码验证失败: 密码不能为空");
+                return false;
+            }
+            if (val.length < 6) {
+                showError(password, errEl, "密码长度至少6个字符");
+                hideSuccess(sucEl);
+                console.log("密码验证失败: 长度不足");
+                return false;
+            }
+            var score = 0;
+            if (val.length >= 8) score++;
+            if (/[a-z]/.test(val)) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^a-zA-Z0-9]/.test(val)) score++;
+
+            var strength = "";
+            if (score <= 2) { strengthBar.className = "password-strength-bar weak"; strength = "弱"; }
+            else if (score === 3) { strengthBar.className = "password-strength-bar medium"; strength = "中等"; }
+            else { strengthBar.className = "password-strength-bar strong"; strength = "强"; }
+            strengthText.textContent = strength;
+
+            hideError(password, errEl);
+            showSuccess(password, sucEl);
+            console.log("密码验证通过: 强度 - " + strength);
+
+            if (confirmPassword.value) validateConfirmPassword();
+            return true;
+        }
+
+        function validateConfirmPassword() {
+            var val = confirmPassword.value;
+            var errEl = document.getElementById("confirm-password-error");
+            var sucEl = document.getElementById("confirm-password-success");
+            if (!val) {
+                showError(confirmPassword, errEl, "请再次输入密码");
+                hideSuccess(sucEl);
+                console.log("确认密码验证失败: 不能为空");
+                return false;
+            }
+            if (val !== password.value) {
+                showError(confirmPassword, errEl, "两次输入的密码不一致");
+                hideSuccess(sucEl);
+                console.log("确认密码验证失败: 密码不一致");
+                return false;
+            }
+            hideError(confirmPassword, errEl);
+            showSuccess(confirmPassword, sucEl);
+            console.log("确认密码验证通过");
+            return true;
+        }
+
+        function validateAge() {
+            var val = age.value.trim();
+            var errEl = document.getElementById("age-error");
+            var sucEl = document.getElementById("age-success");
+            if (!val) {
+                showError(age, errEl, "年龄不能为空");
+                hideSuccess(sucEl);
+                console.log("年龄验证失败: 年龄不能为空");
+                return false;
+            }
+            var num = parseInt(val);
+            if (num < 18 || num > 100) {
+                showError(age, errEl, "年龄必须在18-100之间");
+                hideSuccess(sucEl);
+                console.log("年龄验证失败: 年龄超出范围");
+                return false;
+            }
+            hideError(age, errEl);
+            showSuccess(age, sucEl);
+            console.log("年龄验证通过");
+            return true;
+        }
+
+        function validateGender() {
+            var errEl = document.getElementById("gender-error");
+            var sucEl = document.getElementById("gender-success");
+            if (!gender.value) {
+                showError(gender, errEl, "请选择性别");
+                hideSuccess(sucEl);
+                console.log("性别验证失败: 未选择");
+                return false;
+            }
+            hideError(gender, errEl);
+            showSuccess(gender, sucEl);
+            console.log("性别验证通过");
+            return true;
+        }
+
+        username.addEventListener("blur", validateUsername);
+        username.addEventListener("input", validateUsername);
+        email.addEventListener("blur", validateEmail);
+        email.addEventListener("input", validateEmail);
+        password.addEventListener("blur", validatePassword);
+        password.addEventListener("input", validatePassword);
+        confirmPassword.addEventListener("blur", validateConfirmPassword);
+        confirmPassword.addEventListener("input", validateConfirmPassword);
+        age.addEventListener("blur", validateAge);
+        age.addEventListener("input", validateAge);
+        gender.addEventListener("change", validateGender);
+        gender.addEventListener("blur", validateGender);
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            console.log("表单提交事件触发");
+            var v1 = validateUsername();
+            var v2 = validateEmail();
+            var v3 = validatePassword();
+            var v4 = validateConfirmPassword();
+            var v5 = validateAge();
+            var v6 = validateGender();
+            if (!agreeTerms.checked) {
+                var termsErr = document.getElementById("terms-error");
+                termsErr.textContent = "请先同意用户协议";
+                termsErr.classList.add("show");
+                console.log("表单验证失败: 未同意协议");
+                showResultMessage("请完善表单信息并同意用户协议", "error");
+                return;
+            } else {
+                document.getElementById("terms-error").classList.remove("show");
+            }
+            if (v1 && v2 && v3 && v4 && v5 && v6 && agreeTerms.checked) {
+                console.log("表单验证通过");
+                showResultMessage("注册成功! 欢迎加入!", "success");
+            } else {
+                console.log("表单验证失败");
+                showResultMessage("请检查并修正表单中的错误", "error");
+            }
+        });
+    </script>
+</body>
+</html>

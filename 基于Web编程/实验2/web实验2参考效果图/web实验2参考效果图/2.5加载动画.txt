@@ -1,0 +1,29 @@
+加载元素样式：
+创建一个 `.loader` 类，设置元素为 50px * 50px 的圆形。
+使用 `border` 属性设置边框宽度为 5px，颜色为绿色（#4caf50），并单独为顶部设置白色边框。
+旋转动画定义：
+创建 `.spin` 动画，定义在 0% 时旋转角度为 0 度，100% 时旋转角度为 360 度。
+应用 `.spin` 动画到 `.loader` 元素，动画时长为 2 秒，使用 `ease-in-out` 缓动函数，并设置为无限循环。
+进度条样式：
+创建 `.progress-bar` 类，设置其宽度为 200px，高度为 10px，背景颜色为浅灰色（#e0e0e0），并应用圆角 5px。
+进度样式：
+创建 `.progress` 类，设置其高度为 100%，背景颜色为绿色（#4caf50）。
+填充动画定义：
+创建 `.fill` 动画，定义 0% 时 `width` 为 0%，60% 时 `width` 为 90%，100% 时 `width` 为 100%。
+将 `.fill` 动画应用于 `.progress` 元素，动画时长为 5 秒，结束时保持最后状态。
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading Animation</title>
+  </head>
+  <body>
+    <div class="loader"></div>
+    <div class="progress-bar">
+      <div class="progress"></div>
+    </div>
+  </body>
+</html>
+

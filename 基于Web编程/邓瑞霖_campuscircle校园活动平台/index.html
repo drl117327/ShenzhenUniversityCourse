@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园圈 - 校园生活交友平台</title>
+<style>
+/* ========== CSS Variables & Theme ========== */
+:root {
+  --bg: #f7f6f3; --bg-card: #ffffff; --bg-nav: rgba(255,255,255,0.92); --bg-input: #f2f1ee;
+  --text: #2c2c2c; --text-secondary: #5e5e5e; --text-muted: #8c8c8c; --border: #e8e5e0;
+  --primary: #5b8cc9; --primary-hover: #4a7ab5; --primary-light: #edf3fa;
+  --accent: #756754; --accent-light: #f0ede8; --accent-dark: #5a4f3f;
+  --danger: #d94a4a; --danger-hover: #c0392b; --success: #4a9c6c; --warning: #d4a030;
+  --heart: #e85555; --gold: #d4a030;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --radius: 14px; --radius-sm: 10px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --topbar-height: 56px; --sidebar-width: 220px; --max-width: 880px;
+}
+[data-theme="dark"] {
+  --bg: #1c1b18; --bg-card: #262522; --bg-nav: rgba(38,37,34,0.92); --bg-input: #2d2c28;
+  --text: #e8e4dc; --text-secondary: #b5b0a5; --text-muted: #7a756a; --border: #3d3a33;
+  --primary: #6d9ed4; --primary-hover: #5b8cc9; --primary-light: #252e3a;
+  --accent: #9c8d76; --accent-light: #2d2a24; --accent-dark: #b8a88e;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3); --shadow-hover: 0 4px 20px rgba(0,0,0,0.4);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; min-height: 100vh; transition: background var(--transition), color var(--transition); font-size: 15px; }
+a { color: var(--primary); text-decoration: none; } a:hover { text-decoration: none; }
+img { max-width: 100%; } button { cursor: pointer; font-family: inherit; }
+input, textarea, select { font-family: inherit; }
+
+/* ========== Top Bar ========== */
+.topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height); background: var(--bg-nav); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 200; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
+.topbar-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.sidebar-toggle { background: none; border: none; font-size: 20px; cursor: pointer; padding: 8px; border-radius: 10px; color: var(--text-secondary); transition: all var(--transition); display: none; }
+.sidebar-toggle:hover { background: var(--accent-light); color: var(--accent-dark); }
+.topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: var(--text); white-space: nowrap; letter-spacing: -0.3px; }
+.topbar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), #8d7c65); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; }
+.topbar-center { flex: 1; max-width: 500px; margin: 0 auto; }
+.topbar-search { position: relative; }
+.topbar-search input { width: 100%; padding: 9px 16px 9px 38px; border: 1px solid var(--border); border-radius: 22px; font-size: 14px; background: var(--bg-input); color: var(--text); outline: none; transition: all var(--transition); }
+.topbar-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.topbar-search .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); pointer-events: none; }
+.topbar-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.theme-toggle { background: var(--bg-input); border: none; width: 36px; height: 36px; border-radius: 10px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition); color: var(--text-secondary); }
+.theme-toggle:hover { background: var(--accent-light); color: var(--accent-dark); }
+.checkin-btn { background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all var(--transition); display: flex; align-items: center; gap: 4px; }
+.checkin-btn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+.checkin-btn.done { background: var(--success); }
+.checkin-streak { font-size: 11px; color: var(--text-muted); margin-left: 2px; font-weight: 500; }
+#topbarUserInfo { display: none; align-items: center; gap: 4px; }
+#topbarUserInfo.show { display: flex; }
+#topbarGuest { display: flex; align-items: center; gap: 6px; }
+.topbar-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); cursor: pointer; transition: all var(--transition); }
+.topbar-avatar:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.topbar-nickname { font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Notification Bell */
+.notif-bell { position: relative; background: none; border: none; font-size: 20px; cursor: pointer; padding: 8px; border-radius: 10px; transition: all var(--transition); color: var(--text-secondary); }
+.notif-bell:hover { background: var(--accent-light); color: var(--accent-dark); }
+.notif-badge { position: absolute; top: 2px; right: 2px; background: var(--danger); color: #fff; font-size: 10px; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; display: none; }
+.notif-dropdown { position: fixed; top: var(--topbar-height); right: 16px; width: 380px; max-height: 440px; overflow-y: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-hover); z-index: 250; display: none; }
+.notif-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
+.notif-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; }
+.notif-item { padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background var(--transition); display: flex; gap: 12px; align-items: flex-start; }
+.notif-item:hover { background: var(--accent-light); }
+.notif-item.unread { border-left: 3px solid var(--accent); background: var(--accent-light); }
+.notif-item .notif-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.notif-item .notif-body { flex: 1; font-size: 13px; line-height: 1.5; }
+.notif-item .notif-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.notif-empty { padding: 48px; text-align: center; color: var(--text-muted); }
+
+/* ========== Sidebar ========== */
+.sidebar { position: fixed; top: var(--topbar-height); left: 0; bottom: 0; width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border); z-index: 150; overflow-y: auto; padding: 8px 0; transition: transform var(--transition); }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; }
+.sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 10px; font-size: 14px; color: var(--text-secondary); transition: all var(--transition); white-space: nowrap; font-weight: 500; }
+.sidebar-nav a:hover { background: var(--accent-light); color: var(--accent-dark); text-decoration: none; }
+.sidebar-nav a.active { background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; }
+.sidebar-nav a .nav-icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+.sidebar-divider { height: 1px; background: var(--border); margin: 8px 20px; }
+.sidebar-section { padding: 8px 10px; }
+.sidebar-section .checkin-row { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
+.sidebar-section .checkin-row .btn { width: 100%; justify-content: center; }
+.sidebar-footer { padding: 16px 20px; font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: auto; }
+
+/* ========== Sidebar Profile Card ========== */
+.sidebar-profile-card { display: flex; flex-direction: column; align-items: center; padding: 20px 14px; margin: 0 10px 4px; border-radius: var(--radius); cursor: pointer; transition: all var(--transition); text-align: center; }
+.sidebar-profile-card:hover { background: var(--accent-light); }
+.spc-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 10px; transition: transform var(--transition); }
+.sidebar-profile-card:hover .spc-avatar { transform: scale(1.04); }
+.spc-nickname { font-size: 17px; font-weight: 650; color: var(--text); margin-bottom: 12px; }
+.spc-stats { display: flex; flex-direction: column; gap: 4px; }
+.spc-stat { font-size: 15px; color: var(--text-secondary); }
+.spc-stat .spc-num { color: var(--accent); font-weight: 700; }
+
+/* ========== Main Content ========== */
+.main-content { margin-left: var(--sidebar-width); margin-top: var(--topbar-height); min-height: calc(100vh - var(--topbar-height)); padding: 0; }
+
+/* ========== Buttons ========== */
+.btn { padding: 9px 22px; border-radius: 10px; border: none; font-size: 14px; font-weight: 500; transition: all var(--transition); letter-spacing: 0.1px; display: inline-flex; align-items: center; gap: 5px; }
+.btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(117,103,84,0.25); }
+.btn-outline { background: transparent; border: 1.5px solid var(--accent); color: var(--accent); } .btn-outline:hover { background: var(--accent-light); }
+.btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: var(--danger-hover); }
+.btn-sm { padding: 6px 14px; font-size: 13px; border-radius: 8px; }
+.btn-icon { width: 36px; height: 36px; border-radius: 50%; border: none; background: transparent; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all var(--transition); }
+.btn-icon:hover { background: var(--accent-light); color: var(--accent-dark); }
+
+/* ========== Layout ========== */
+.container { max-width: var(--max-width); margin: 0 auto; padding: 20px 24px; }
+.page { display: none; } .page.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+/* ========== Cards ========== */
+.card { background: var(--bg-card); border-radius: var(--radius); padding: 22px; margin-bottom: 14px; box-shadow: var(--shadow); transition: all var(--transition); border: 1px solid var(--border); }
+.card:hover { box-shadow: var(--shadow-hover); }
+
+/* ========== Stories Bar ========== */
+.stories-bar { display: flex; gap: 18px; overflow-x: auto; padding: 6px 0 16px; margin-bottom: 6px; scroll-behavior: smooth; }
+.stories-bar::-webkit-scrollbar { display: none; }
+.story-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; transition: transform var(--transition); }
+.story-item:hover { transform: translateY(-3px); }
+.story-ring { width: 64px; height: 64px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, var(--accent), #8d7c65, var(--primary)); display: flex; align-items: center; justify-content: center; }
+.story-ring.no-story { background: var(--border); }
+.story-ring img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid var(--bg-card); }
+.story-ring .add-icon { font-size: 26px; color: var(--accent); }
+.story-name { font-size: 11px; color: var(--text-secondary); max-width: 68px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ========== Post Card ========== */
+.post-card { animation: slideUp 0.35s ease; }
+.post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.post-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; cursor: pointer; transition: transform var(--transition); }
+.post-avatar:hover { transform: scale(1.08); }
+.post-user-info { flex: 1; } .post-nickname { font-weight: 650; font-size: 15px; color: var(--text); cursor: pointer; } .post-nickname:hover { color: var(--accent-dark); }
+.post-time { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.post-content { margin-bottom: 14px; word-break: break-word; white-space: pre-wrap; line-height: 1.75; font-size: 15px; }
+.post-content.rendered { white-space: normal; }
+.post-content.rendered h1,.post-content.rendered h2,.post-content.rendered h3 { margin: 10px 0 6px; font-size: 1.15em; font-weight: 700; color: var(--accent-dark); }
+.post-content.rendered code { background: var(--accent-light); padding: 2px 6px; border-radius: 5px; font-size: 0.9em; }
+.post-content.rendered pre { background: var(--accent-light); padding: 14px; border-radius: var(--radius-sm); overflow-x: auto; margin: 10px 0; }
+.post-content.rendered pre code { background: none; padding: 0; }
+.post-content.rendered blockquote { border-left: 3px solid var(--accent); padding-left: 14px; color: var(--text-secondary); margin: 10px 0; }
+.post-content.rendered ul,.post-content.rendered ol { margin: 10px 0; padding-left: 22px; }
+.post-content.rendered a { color: var(--primary); }
+.post-content.rendered img { max-width: 100%; border-radius: var(--radius-sm); }
+.post-images { display: grid; gap: 6px; margin-bottom: 14px; }
+.post-images.col1 { grid-template-columns: 1fr; } .post-images.col2 { grid-template-columns: 1fr 1fr; } .post-images.col3 { grid-template-columns: 1fr 1fr 1fr; }
+.post-images img { width: 100%; border-radius: var(--radius-sm); cursor: pointer; max-height: 320px; object-fit: cover; transition: transform var(--transition); }
+.post-images img:hover { transform: scale(1.01); }
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.post-tag { color: var(--accent); font-size: 12.5px; background: var(--accent-light); padding: 3px 12px; border-radius: 14px; font-weight: 500; }
+.post-actions { display: flex; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.post-action { display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 13.5px; background: none; border: none; cursor: pointer; transition: all var(--transition); padding: 6px 12px; border-radius: 8px; font-weight: 500; }
+.post-action:hover { color: var(--accent-dark); background: var(--accent-light); }
+.post-action.liked { color: var(--heart); }
+.visibility-badge { font-size: 11px; padding: 2px 10px; border-radius: 12px; background: var(--accent-light); color: var(--accent); font-weight: 500; }
+
+/* ========== Poll ========== */
+.poll-box { background: var(--accent-light); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 14px; }
+.poll-title { font-weight: 650; margin-bottom: 12px; font-size: 15px; }
+.poll-option { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding: 10px 14px; background: var(--bg-card); border-radius: 10px; cursor: pointer; transition: all var(--transition); border: 1.5px solid var(--border); position: relative; overflow: hidden; }
+.poll-option:hover { border-color: var(--accent); }
+.poll-option.voted { border-color: var(--accent); background: var(--accent-light); }
+.poll-option .poll-bar { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); opacity: 0.12; border-radius: 10px; transition: width 0.5s ease; z-index: 0; }
+.poll-option .poll-text { position: relative; z-index: 1; flex: 1; font-size: 14px; }
+.poll-option .poll-pct { position: relative; z-index: 1; font-weight: 650; color: var(--accent); font-size: 13px; }
+.poll-info { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+.poll-create { background: var(--accent-light); border-radius: var(--radius-sm); padding: 14px; margin-top: 12px; }
+.poll-create input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; font-size: 14px; background: var(--bg-card); color: var(--text); }
+
+/* ========== Emoji Picker ========== */
+.emoji-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: all var(--transition); }
+.emoji-btn:hover { background: var(--accent-light); }
+.emoji-picker { position: fixed; z-index: 300; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; box-shadow: var(--shadow-hover); display: none; width: 304px; max-height: 240px; overflow-y: auto; }
+.emoji-picker.show { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.emoji-item { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; border-radius: 8px; transition: background var(--transition); border: none; background: none; }
+.emoji-item:hover { background: var(--accent-light); }
+
+/* ========== Feed Tabs ========== */
+.feed-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-card); border-radius: var(--radius); padding: 5px; border: 1px solid var(--border); }
+.feed-tab { flex: 1; padding: 10px 20px; text-align: center; background: transparent; border: none; font-size: 14px; font-weight: 550; color: var(--text-secondary); cursor: pointer; transition: all var(--transition); border-radius: 10px; }
+.feed-tab:hover { background: var(--accent-light); color: var(--accent-dark); }
+.feed-tab.active { background: var(--accent); color: #fff; }
+
+/* ========== Hot Posts ========== */
+.hot-section { margin-bottom: 24px; }
+.hot-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: var(--accent); }
+.hot-title::before { content: ''; width: 4px; height: 18px; background: var(--accent); border-radius: 2px; }
+.hot-scroll { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; }
+.hot-card { min-width: 220px; background: var(--bg-card); border-radius: var(--radius); padding: 16px; border: 1px solid var(--border); cursor: pointer; transition: all var(--transition); flex-shrink: 0; }
+.hot-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); border-color: var(--accent); }
+.hot-card .hot-rank { font-size: 26px; font-weight: 800; color: var(--accent); }
+.hot-card .hot-text { font-size: 14px; margin-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-card .hot-meta { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+/* ========== Auth Pages ========== */
+.auth-container { max-width: 420px; margin: 40px auto; animation: fadeIn 0.3s ease; }
+.auth-card { background: var(--bg-card); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.auth-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.auth-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 28px; font-size: 14px; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--text-secondary); }
+.form-input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-input); color: var(--text); transition: border var(--transition); }
+.form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.form-input.error { border-color: var(--danger); }
+.form-error { color: var(--danger); font-size: 12px; margin-top: 4px; display: none; } .form-error.show { display: block; }
+.form-hint { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+.form-row { display: flex; gap: 10px; align-items: center; }
+.form-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+.form-footer { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted); } .form-footer a { font-weight: 500; }
+.pwd-toggle { position: absolute; right: 12px; top: 34px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+.pwd-group { position: relative; } .pwd-group .form-input { padding-right: 40px; }
+
+/* ========== Profile ========== */
+.profile-header { background: var(--bg-card); border-radius: var(--radius); padding: 36px 28px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
+.profile-avatar { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); }
+.profile-nickname { font-size: 23px; font-weight: 700; margin-top: 14px; }
+.profile-bio { color: var(--text-secondary); margin-top: 8px; font-size: 14px; }
+.profile-meta { display: flex; justify-content: center; gap: 36px; margin-top: 18px; }
+.profile-meta-item { text-align: center; cursor: pointer; transition: transform var(--transition); }
+.profile-meta-item:hover { transform: scale(1.05); }
+.profile-meta-item .num { font-size: 22px; font-weight: 700; color: var(--accent); } .profile-meta-item .label { font-size: 12px; color: var(--text-muted); }
+.profile-interests { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 14px; }
+.interest-tag { background: var(--accent-light); color: var(--accent-dark); padding: 4px 14px; border-radius: 14px; font-size: 13px; font-weight: 500; }
+.profile-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+.profile-stats { color: var(--text-muted); font-size: 12px; margin-top: 10px; }
+/* Badges */
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+.badge-item { display: flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 16px; font-size: 12px; font-weight: 500; background: var(--accent-light); color: var(--accent-dark); }
+.badge-item.locked { opacity: 0.4; filter: grayscale(1); }
+
+/* ========== Dashboard ========== */
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.dash-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); text-align: center; transition: all var(--transition); }
+.dash-card:hover { box-shadow: var(--shadow-hover); }
+.dash-card .dash-num { font-size: 34px; font-weight: 800; color: var(--accent); }
+.dash-card .dash-label { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+.dash-chart { background: var(--bg-card); border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); margin-bottom: 16px; }
+.dash-chart h3 { margin-bottom: 16px; font-size: 16px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 8px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.bar-fill { width: 100%; background: var(--accent); border-radius: 6px 6px 0 0; transition: height 0.5s ease; min-width: 20px; }
+.bar-label { font-size: 11px; color: var(--text-muted); }
+.bar-val { font-size: 11px; font-weight: 600; color: var(--accent); }
+
+/* ========== Edit Profile ========== */
+.edit-section { margin-bottom: 20px; } .edit-section h3 { font-size: 16px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.avatar-upload { display: flex; align-items: center; gap: 16px; }
+.avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+.interest-input-wrap { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); min-height: 42px; background: var(--bg-input); align-items: center; }
+.interest-chip { display: flex; align-items: center; gap: 4px; background: var(--accent); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 13px; }
+.interest-chip .remove { cursor: pointer; font-weight: bold; font-size: 16px; line-height: 1; } .interest-chip .remove:hover { color: #ffcccc; }
+.interest-input { border: none; outline: none; flex: 1; min-width: 80px; background: transparent; color: var(--text); font-size: 14px; }
+
+/* ========== Create Post ========== */
+.create-post-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.create-textarea { width: 100%; min-height: 150px; border: none; resize: vertical; font-size: 16px; color: var(--text); background: transparent; outline: none; }
+.image-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 10px; }
+.image-preview-item { position: relative; border-radius: var(--radius-sm); overflow: hidden; }
+.image-preview-item img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.image-preview-item .remove-img { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.create-actions { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+.visibility-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; background: var(--bg-input); color: var(--text); }
+.draft-indicator { font-size: 12px; color: var(--accent); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+.mention-suggest { position: absolute; z-index: 300; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-hover); max-height: 200px; overflow-y: auto; width: 240px; display: none; }
+.mention-suggest.show { display: block; }
+.mention-item { padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: background var(--transition); }
+.mention-item:hover, .mention-item.active { background: var(--accent-light); }
+.mention-item img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+/* ========== Comments ========== */
+.comment-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.comment-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+.comment-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.comment-item:last-child { border-bottom: none; }
+.comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.comment-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.comment-nickname { font-weight: 600; font-size: 13px; }
+.comment-time { font-size: 11px; color: var(--text-muted); }
+.comment-body { font-size: 14px; margin-left: 38px; word-break: break-word; }
+.comment-input-wrap { display: flex; gap: 10px; margin-top: 12px; align-items: center; position: relative; }
+.comment-input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg-input); color: var(--text); outline: none; }
+.comment-input:focus { border-color: var(--accent); }
+
+/* ========== Groups ========== */
+.group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.group-card { background: var(--bg-card); border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); cursor: pointer; transition: all var(--transition); }
+.group-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); border-color: var(--accent); }
+.group-card h3 { font-size: 16px; margin-bottom: 8px; }
+.group-card p { font-size: 13px; color: var(--text-muted); }
+.group-card .group-meta { font-size: 12px; color: var(--text-secondary); margin-top: 12px; display: flex; gap: 14px; }
+.group-header { background: var(--bg-card); border-radius: var(--radius); padding: 24px; border: 1px solid var(--border); margin-bottom: 20px; }
+.group-header h2 { margin-bottom: 6px; }
+.group-header p { color: var(--text-muted); }
+.group-members { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.group-member { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: var(--accent-light); border-radius: 14px; font-size: 13px; cursor: pointer; }
+.group-member img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+
+/* ========== Search ========== */
+.search-results { padding: 0; }
+.search-result-item { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--bg-card); border-radius: var(--radius); margin-bottom: 10px; cursor: pointer; transition: all var(--transition); border: 1px solid var(--border); }
+.search-result-item:hover { box-shadow: var(--shadow-hover); }
+.search-result-item img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+
+/* ========== Messages ========== */
+.msg-sidebar { display: grid; grid-template-columns: 200px 1fr; gap: 16px; min-height: 400px; }
+.msg-contacts { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); overflow-y: auto; }
+.msg-contact { padding: 14px 16px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: background var(--transition); }
+.msg-contact:hover, .msg-contact.active { background: var(--accent-light); }
+.msg-contact img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+.msg-chat { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); display: flex; flex-direction: column; }
+.msg-chat-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.msg-chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.msg-bubble { max-width: 70%; padding: 10px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+.msg-bubble.sent { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg-bubble.received { align-self: flex-start; background: var(--accent-light); color: var(--text); border-bottom-left-radius: 4px; }
+.msg-chat-input { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); align-items: center; }
+.msg-chat-input input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg-input); color: var(--text); outline: none; }
+
+/* ========== Group Chat ========== */
+.group-chat { background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--border); margin-top: 16px; display: flex; flex-direction: column; }
+.group-chat-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+.group-chat-body { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; max-height: 400px; min-height: 200px; }
+.group-chat-input { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); align-items: center; }
+.group-chat-input input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg-input); color: var(--text); outline: none; }
+.group-msg { display: flex; gap: 8px; align-items: flex-start; }
+.group-msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.group-msg-content { max-width: 70%; }
+.group-msg-user { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+.group-msg-bubble { padding: 8px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; background: var(--accent-light); color: var(--text); border-top-left-radius: 4px; }
+.group-msg.mine .group-msg-bubble { background: var(--accent); color: #fff; border-top-left-radius: 16px; border-top-right-radius: 4px; }
+.group-msg.mine { flex-direction: row-reverse; }
+.group-msg.mine .group-msg-user { text-align: right; }
+.group-msg-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.group-msg-system { text-align: center; font-size: 12px; color: var(--text-muted); padding: 6px 0; }
+
+/* ========== Admin ========== */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th, .admin-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.admin-table th { font-weight: 600; color: var(--text-secondary); font-size: 13px; background: var(--accent-light); }
+.admin-table .user-cell { display: flex; align-items: center; gap: 8px; }
+.admin-table .user-cell img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.badge { padding: 2px 10px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+.badge-success { background: #d4edda; color: #155724; } .badge-danger { background: #f8d7da; color: #721c24; } .badge-warning { background: #fff3cd; color: #856404; }
+
+/* ========== Modal ========== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease; backdrop-filter: blur(2px); }
+.modal { background: var(--bg-card); border-radius: var(--radius); padding: 28px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+.modal h3 { margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ========== Toast ========== */
+.toast-container { position: fixed; top: 72px; right: 20px; z-index: 400; display: flex; flex-direction: column; gap: 8px; }
+.toast { padding: 12px 20px; border-radius: var(--radius-sm); color: #fff; font-size: 14px; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.2); max-width: 350px; }
+.toast-success { background: var(--success); } .toast-error { background: var(--danger); } .toast-info { background: var(--accent); } .toast-warning { background: var(--warning); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ========== Empty State ========== */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); } .empty-state .empty-icon { font-size: 48px; margin-bottom: 14px; } .empty-state p { font-size: 14px; }
+
+/* ========== Marquee ========== */
+.marquee-bar { background: linear-gradient(135deg, var(--accent), #8d7c65); color: #fff; padding: 7px 0; font-size: 13px; overflow: hidden; white-space: nowrap; }
+.marquee-bar span { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+.new-dot { display: inline-block; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; margin-left: 4px; animation: pulse 1.5s infinite; }
+
+/* ========== Infinite Scroll Sentinel ========== */
+.scroll-sentinel { height: 40px; text-align: center; color: var(--text-muted); font-size: 13px; padding: 10px 0; }
+
+/* ========== Inline Edit ========== */
+.inline-edit-textarea { width: 100%; min-height: 100px; padding: 10px; border: 1.5px solid var(--accent); border-radius: var(--radius-sm); font-size: 14px; background: var(--bg-input); color: var(--text); resize: vertical; outline: none; }
+
+/* ========== Year Review ========== */
+.year-review { text-align: center; }
+.year-review .yr-big { font-size: 48px; margin: 16px 0; }
+.year-review .yr-stat { font-size: 18px; margin: 8px 0; }
+.year-review .yr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.year-review .yr-card { background: var(--accent-light); border-radius: var(--radius-sm); padding: 16px; text-align: center; }
+.year-review .yr-card .yr-num { font-size: 28px; font-weight: 800; color: var(--accent); }
+.year-review .yr-card .yr-label { font-size: 12px; color: var(--text-muted); }
+
+/* ========== Responsive ========== */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+  .main-content { margin-left: 0; } .sidebar-toggle { display: flex; }
+  .topbar-center { max-width: 300px; }
+}
+@media (max-width: 600px) {
+  .container { padding: 12px 14px; }
+  .topbar-logo { font-size: 15px; } .topbar-logo .logo-icon { width: 30px; height: 30px; font-size: 15px; }
+  .topbar-center { max-width: 200px; } .topbar-search input { font-size: 13px; padding: 8px 12px 8px 32px; }
+  .post-images.col2, .post-images.col3 { grid-template-columns: 1fr 1fr; } .msg-sidebar { grid-template-columns: 1fr; }
+  .profile-meta { gap: 20px; } .hot-scroll { gap: 8px; } .hot-card { min-width: 160px; }
+  .dash-grid { grid-template-columns: repeat(2, 1fr); } .notif-dropdown { width: calc(100vw - 32px); right: 8px; }
+  .create-actions { flex-direction: column; align-items: stretch; }
+  .topbar-nickname { display: none; }
+}
+@media (max-width: 400px) {
+  .topbar-center { display: none; } .topbar-logo { gap: 6px; }
+}
+</style>
+</head>
+<body data-theme="light">
+
+<!-- ========== Top Bar ========== -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="菜单">☰</button>
+    <a class="topbar-logo" href="#" onclick="navigate('home')"><div class="logo-icon">🎓</div>校园圈</a>
+  </div>
+  <div class="topbar-center">
+    <div class="topbar-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" placeholder="搜索校园圈..." onfocus="onSearchFocus()" onkeydown="if(event.key==='Enter')onSearchFocus()">
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+    <span id="topbarUserInfo">
+      <button class="checkin-btn" id="checkinBtn" onclick="doCheckIn()" title="每日签到">📅</button>
+      <span class="checkin-streak" id="checkinStreak"></span>
+      <button class="notif-bell" id="notifBell" onclick="toggleNotifDropdown()" title="通知">🔔<span class="notif-badge" id="notifBadge">0</span></button>
+      <img id="topbarAvatar" class="topbar-avatar" src="" alt="" onclick="navigate('profile')">
+      <span id="topbarNickname" class="topbar-nickname" onclick="navigate('profile')"></span>
+      <button class="btn btn-outline btn-sm" onclick="logout()">退出</button>
+    </span>
+    <span id="topbarGuest">
+      <button class="btn btn-outline btn-sm" onclick="navigate('login')">登录</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('register')">注册</button>
+    </span>
+  </div>
+</header>
+
+<!-- ========== Sidebar ========== -->
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+    <a href="#" onclick="navigate('home')" data-page="home" class="active"><span class="nav-icon">🏠</span> 首页</a>
+    <!-- <a href="#" onclick="navigate('search')" data-page="search"><span class="nav-icon">🔍</span> 发现</a> -->
+    <a href="#" id="sidebarCreate" style="display:none" onclick="navigate('create')" data-page="create"><span class="nav-icon">✏️</span> 发布动态</a>
+    <a href="#" id="sidebarGroups" style="display:none" onclick="navigate('groups')" data-page="groups"><span class="nav-icon">👥</span> 群组</a>
+    <a href="#" id="sidebarMessages" style="display:none" onclick="navigate('messages')" data-page="messages"><span class="nav-icon">💬</span> 消息</a>
+    <a href="#" id="sidebarDashboard" style="display:none" onclick="navigate('dashboard')" data-page="dashboard"><span class="nav-icon">📊</span> 数据面板</a>
+    <a href="#" id="sidebarAdmin" style="display:none" onclick="navigate('admin')" data-page="admin"><span class="nav-icon">⚙️</span> 管理</a>
+  </nav>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section" id="sidebarCheckinSection">
+    <div class="checkin-row">
+      <button class="btn btn-primary btn-sm checkin-btn" id="sidebarCheckinBtn" onclick="doCheckIn()">📅 每日签到</button>
+      <div class="checkin-streak" id="sidebarCheckinStreak" style="text-align:center;display:block;margin-top:4px"></div>
+    </div>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-profile-card" id="sidebarProfileCard" onclick="navigate('profile')">
+    <img class="spc-avatar" id="spcAvatar" src="" alt="">
+    <div class="spc-nickname" id="spcNickname">未登录</div>
+    <div class="spc-stats">
+      <div class="spc-stat"><span class="spc-num" id="spcPosts">0</span> 动态</div>
+      <div class="spc-stat"><span class="spc-num" id="spcFollowing">0</span> 关注</div>
+      <div class="spc-stat"><span class="spc-num" id="spcFollowers">0</span> 粉丝</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Notification Dropdown -->
+<div class="notif-dropdown" id="notifDropdown">
+  <div class="notif-header"><span>🔔 通知</span><button class="btn btn-sm btn-outline" onclick="markAllNotifRead()">全部已读</button></div>
+  <div id="notifList"></div>
+</div>
+
+<!-- ========== Main Content ========== -->
+<main class="main-content" id="mainContent">
+
+<!-- Marquee -->
+<div class="marquee-bar" id="marqueeBar"><span id="marqueeText">🎉 欢迎来到校园圈！最新动态火热上线中，快来参与互动吧~</span></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Emoji Picker (global) -->
+<div class="emoji-picker" id="emojiPicker"></div>
+
+<!-- Mention Suggestion -->
+<div class="mention-suggest" id="mentionSuggest"></div>
+
+<!-- ==================== Home Page ==================== -->
+<div class="page active" id="page-home">
+  <div class="container">
+    <div class="hot-section" id="hotSection" style="display:none"><div class="hot-title">热门推荐</div><div class="hot-scroll" id="hotPosts"></div></div>
+    <div class="stories-bar" id="storiesBar"></div>
+    <div class="feed-tabs" id="feedTabs">
+      <button class="feed-tab active" onclick="switchFeed('all')" id="tabAll">🌐 全站动态</button>
+      <button class="feed-tab" onclick="switchFeed('following')" id="tabFollowing">👥 关注动态</button>
+    </div>
+    <div id="postFeed"></div>
+    <div class="empty-state" id="feedEmpty" style="display:none"><div class="empty-icon">📭</div><p>暂无动态，快去发布第一条吧！</p></div>
+    <div class="scroll-sentinel" id="scrollSentinel" style="display:none">加载中...</div>
+  </div>
+</div>
+
+<!-- ==================== Post Detail Page ==================== -->
+<div class="page" id="page-post-detail"><div class="container" id="postDetailContent"></div></div>
+
+<!-- ==================== Profile Page ==================== -->
+<div class="page" id="page-profile"><div class="container" id="profileContent"></div></div>
+
+<!-- ==================== Dashboard Page ==================== -->
+<div class="page" id="page-dashboard"><div class="container" id="dashboardContent"></div></div>
+
+<!-- ==================== Edit Profile Page ==================== -->
+<div class="page" id="page-edit-profile">
+  <div class="container"><div class="card">
+    <h2 style="margin-bottom:20px">✏️ 编辑个人资料</h2>
+    <div class="edit-section"><h3>头像</h3><div class="avatar-upload"><img id="editAvatarPreview" class="avatar-preview" src="" alt=""><div><input type="file" id="avatarInput" accept="image/*" onchange="previewAvatar(event)" style="display:none"><button class="btn btn-outline btn-sm" onclick="document.getElementById('avatarInput').click()">选择图片</button><p class="form-hint">支持 JPG/PNG</p></div></div></div>
+    <div class="edit-section"><h3>基本信息</h3>
+      <div class="form-group"><label class="form-label">昵称</label><input class="form-input" id="editNickname" placeholder="你的昵称"></div>
+      <div class="form-group"><label class="form-label">个人简介</label><textarea class="form-input" id="editBio" rows="3" placeholder="介绍一下自己吧~"></textarea></div>
+      <div class="form-group"><label class="form-label">兴趣标签（按回车添加）</label><div class="interest-input-wrap" id="interestWrap"><input class="interest-input" id="interestInput" placeholder="输入兴趣后按回车..." onkeydown="addInterest(event)"></div></div>
+    </div>
+    <div class="edit-section"><h3>隐私设置</h3><div class="form-group"><label class="form-label">主页可见性</label><select class="form-input" id="editPrivacy"><option value="public">公开</option><option value="friends">仅好友</option><option value="private">仅自己</option></select></div></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-primary" onclick="saveProfile()">保存修改</button><button class="btn btn-outline" onclick="navigate('profile')">取消</button></div>
+  </div></div>
+</div>
+
+<!-- ==================== Create Post Page ==================== -->
+<div class="page" id="page-create">
+  <div class="container"><div class="create-post-card">
+    <h2 style="margin-bottom:16px">✏️ 发布动态</h2>
+    <div style="position:relative">
+      <textarea class="create-textarea" id="postContent" placeholder="分享你的校园生活...&#10;提示：输入 #话题 添加标签，输入 @用户名 提及用户，支持 Markdown 语法"></textarea>
+    </div>
+    <div class="image-preview-grid" id="imagePreviewGrid"></div>
+    <div id="postPollCreate" class="poll-create" style="display:none">
+      <div style="font-weight:600;margin-bottom:6px;font-size:14px">📊 投票选项</div>
+      <div id="pollOptionsInputs"><input class="form-input" placeholder="选项 1" style="margin-bottom:6px"><input class="form-input" placeholder="选项 2" style="margin-bottom:6px"></div>
+      <button class="btn btn-outline btn-sm" onclick="addPollOptionInput()">+ 添加选项</button>
+    </div>
+    <div class="draft-indicator" id="draftIndicator" style="display:none">💾 已保存草稿 · <a href="#" onclick="loadDraft()">恢复</a> · <a href="#" onclick="clearDraft()">清除</a></div>
+    <div class="create-actions">
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('postImageInput').click()">📷 图片</button>
+      <input type="file" id="postImageInput" accept="image/*" multiple onchange="previewPostImages(event)" style="display:none">
+      <button class="btn btn-outline btn-sm" onclick="togglePollCreate()">📊 投票</button>
+      <button class="emoji-btn" id="createEmojiBtn" onclick="toggleEmojiPicker('createEmojiBtn','postContent')">😊</button>
+      <select class="visibility-select" id="postVisibility"><option value="public">🌐 公开</option><option value="friends">👥 仅好友</option><option value="private">🔒 仅自己</option></select>
+      <button class="btn btn-primary" onclick="publishPost()" style="margin-left:auto">发布动态</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- ==================== Groups Page ==================== -->
+<div class="page" id="page-groups">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2>👥 校园群组</h2>
+      <button class="btn btn-primary btn-sm" onclick="showCreateGroupModal()">+ 创建群组</button>
+    </div>
+    <div class="group-grid" id="groupGrid"></div>
+  </div>
+</div>
+
+<!-- Group Detail -->
+<div class="page" id="page-group-detail"><div class="container" id="groupDetailContent"></div></div>
+
+<!-- ==================== Search Page ==================== -->
+<div class="page" id="page-search">
+  <div class="container">
+    <div style="margin-bottom:16px">
+      <input class="form-input" id="searchInput" placeholder="搜索用户、动态、话题标签..." oninput="doSearch()" style="padding:12px 16px;font-size:15px;border-radius:12px">
+    </div>
+    <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索用户或动态</p></div></div>
+  </div>
+</div>
+
+<!-- ==================== Messages Page ==================== -->
+<div class="page" id="page-messages">
+  <div class="container"><div class="msg-sidebar">
+    <div class="msg-contacts" id="msgContacts"><div class="empty-state" style="padding:20px"><p style="font-size:13px">暂无联系人</p></div></div>
+    <div class="msg-chat" id="msgChat">
+      <div class="msg-chat-header">💬 选择联系人开始聊天</div>
+      <div class="msg-chat-body" id="msgChatBody"></div>
+      <div class="msg-chat-input" id="msgChatInput" style="display:none">
+        <button class="emoji-btn" id="msgEmojiBtn" onclick="toggleEmojiPicker('msgEmojiBtn','msgInput')">😊</button>
+        <input type="text" id="msgInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="btn btn-primary btn-sm" onclick="sendMessage()">发送</button>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ==================== Admin Page ==================== -->
+<div class="page" id="page-admin">
+  <div class="container"><div class="card">
+    <h2>⚙️ 管理员面板</h2><p style="color:var(--text-muted);margin-bottom:16px">管理用户账号</p>
+    <div style="overflow-x:auto"><table class="admin-table" id="adminTable"><thead><tr><th>用户</th><th>学号</th><th>状态</th><th>动态数</th><th>注册时间</th><th>操作</th></tr></thead><tbody id="adminTableBody"></tbody></table></div>
+  </div></div>
+</div>
+
+<!-- ==================== Login Page ==================== -->
+<div class="page" id="page-login">
+  <div class="auth-container"><div class="auth-card">
+    <div class="auth-title">👋 欢迎回来</div><div class="auth-subtitle">登录你的校园圈账号</div>
+    <div class="form-group"><label class="form-label">学号</label><input class="form-input" id="loginId" placeholder="请输入学号"><div class="form-error" id="loginIdError"></div></div>
+    <div class="form-group pwd-group"><label class="form-label">密码</label><input class="form-input" id="loginPwd" type="password" placeholder="请输入密码"><button class="pwd-toggle" id="loginPwdToggle" onclick="togglePwd('loginPwd','loginPwdToggle')">👁️</button><div class="form-error" id="loginPwdError"></div></div>
+    <div class="form-row" style="justify-content:space-between;margin-bottom:20px"><label class="form-check"><input type="checkbox" id="rememberMe"> 记住我</label><a href="#" onclick="forgotPassword()">忘记密码？</a></div>
+    <div style="text-align:center"><button class="btn btn-primary" style="padding:12px 48px" onclick="login()">登 录</button></div>
+    <div class="form-footer">还没有账号？<a href="#" onclick="navigate('register')">立即注册</a></div>
+  </div></div>
+</div>
+
+<!-- ==================== Register Page ==================== -->
+<div class="page" id="page-register">
+  <div class="auth-container"><div class="auth-card">
+    <div class="auth-title">🎓 加入校园圈</div><div class="auth-subtitle">创建你的校园社交账号</div>
+    <div class="form-group"><label class="form-label">学号 <span style="color:var(--danger)">*</span></label><input class="form-input" id="regId" placeholder="请输入学号（8-12位数字）"><div class="form-error" id="regIdError"></div></div>
+    <div class="form-group"><label class="form-label">昵称 <span style="color:var(--danger)">*</span></label><input class="form-input" id="regNickname" placeholder="你的昵称（2-20字符）"><div class="form-error" id="regNicknameError"></div></div>
+    <div class="form-group pwd-group"><label class="form-label">密码 <span style="color:var(--danger)">*</span></label><input class="form-input" id="regPwd" type="password" placeholder="6-20位密码"><button class="pwd-toggle" id="regPwdToggle" onclick="togglePwd('regPwd','regPwdToggle')">👁️</button><div class="form-error" id="regPwdError"></div></div>
+    <div class="form-group pwd-group"><label class="form-label">确认密码 <span style="color:var(--danger)">*</span></label><input class="form-input" id="regPwd2" type="password" placeholder="再次输入密码"><button class="pwd-toggle" id="regPwd2Toggle" onclick="togglePwd('regPwd2','regPwd2Toggle')">👁️</button><div class="form-error" id="regPwd2Error"></div></div>
+    <div class="form-group"><label class="form-label">个人简介</label><textarea class="form-input" id="regBio" rows="2" placeholder="简单介绍一下自己吧~"></textarea></div>
+    <div class="form-group"><label class="form-label">兴趣标签（按回车添加）</label><div class="interest-input-wrap" id="regInterestWrap"><input class="interest-input" id="regInterestInput" placeholder="输入兴趣后按回车..." onkeydown="addRegInterest(event)"></div></div>
+    <button class="btn btn-primary" style="width:100%;padding:12px" onclick="register()">注 册</button>
+    <div class="form-footer">已有账号？<a href="#" onclick="navigate('login')">立即登录</a></div>
+  </div></div>
+</div>
+
+</main>
+
+<script>
+// =====================================================
+// DATA LAYER
+// =====================================================
+const DEFAULT_AVATAR = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="#e0e0e0" width="200" height="200"/><text x="100" y="110" text-anchor="middle" font-size="60" fill="#999">👤</text></svg>');
+function getDB(k,f){try{const v=localStorage.getItem('campus_'+k);return v?JSON.parse(v):f}catch(e){return f}}
+function setDB(k,v){localStorage.setItem('campus_'+k,JSON.stringify(v))}
+function getUsers(){return getDB('users',[])}
+function getPosts(){return getDB('posts',[])}
+function getMessages(){return getDB('messages',[])}
+function getNotifications(){return getDB('notifications',[])}
+function getGroups(){return getDB('groups',[])}
+function getGroupMessages(){return getDB('group_messages',[])}
+function getCheckins(){return getDB('checkins',{})}
+function saveUsers(u){setDB('users',u)}
+function savePosts(p){setDB('posts',p)}
+function saveMessages(m){setDB('messages',m)}
+function saveNotifications(n){setDB('notifications',n)}
+function saveGroups(g){setDB('groups',g)}
+function saveGroupMessages(m){setDB('group_messages',m)}
+function saveCheckins(c){setDB('checkins',c)}
+function getUser(id){return getUsers().find(u=>u.id===id)}
+function getPost(id){return getPosts().find(p=>p.id===id)}
+function genId(){return 'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,9)}
+
+function formatTime(ts){const d=Date.now()-ts;if(d<6e4)return'刚刚';if(d<36e5)return Math.floor(d/6e4)+'分钟前';if(d<864e5)return Math.floor(d/36e5)+'小时前';if(d<6048e5)return Math.floor(d/864e5)+'天前';return new Date(ts).toLocaleDateString('zh-CN')}
+
+// EMOJI DATA
+const EMOJI_LIST = ['😀','😂','🤣','😊','😍','🤩','😎','🥳','😢','😡','👍','👎','❤️','🔥','⭐','🎉','💯','✅','❌','🎓','📚','✏️','💻','🎮','🎵','📷','🏀','⚽','🏃','🍕','☕','🌈','🌟','💪','🙏','🤝','👋','💬','📢','🔔','📌','💡','🎯','🏆','🥇','🐱','🐶','🌻','🍀','🚀','💎','😜','🤔','😴','🥺','😇','🤗','🫡','🙄'];
+
+// =====================================================
+// INIT DB
+// =====================================================
+function initDB(){
+  if(!localStorage.getItem('campus_initialized')){
+    const admin={id:'admin001',username:'admin',nickname:'系统管理员',password:'admin123',avatar:DEFAULT_AVATAR,bio:'校园圈平台管理员',interests:['管理','服务'],followers:['20210001','20210002','20210003'],following:[],isBanned:false,isAdmin:true,createdAt:Date.now()-864e5*30,lastActive:Date.now(),visitCount:520,privacy:'public'};
+    const u1={id:'20210001',username:'zhangsan',nickname:'张三同学',password:'123456',avatar:DEFAULT_AVATAR,bio:'热爱生活，喜欢摄影和旅行~',interests:['摄影','旅行','美食','编程'],followers:['20210002','20210003'],following:['20210002'],isBanned:false,isAdmin:false,createdAt:Date.now()-864e5*20,lastActive:Date.now()-36e5,visitCount:156,privacy:'public'};
+    const u2={id:'20210002',username:'lisi',nickname:'李四学姐',password:'123456',avatar:DEFAULT_AVATAR,bio:'大四学姐，考研ing',interests:['考研','英语','读书','跑步'],followers:['20210001'],following:['20210001','20210003'],isBanned:false,isAdmin:false,createdAt:Date.now()-864e5*25,lastActive:Date.now()-18e5,visitCount:203,privacy:'public'};
+    const u3={id:'20210003',username:'wangwu',nickname:'王五',password:'123456',avatar:DEFAULT_AVATAR,bio:'篮球爱好者，校队成员',interests:['篮球','健身','游戏'],followers:[],following:['20210001'],isBanned:false,isAdmin:false,createdAt:Date.now()-864e5*15,lastActive:Date.now()-72e5,visitCount:89,privacy:'public'};
+    const posts=[
+      {id:'p1',userId:'20210001',type:'normal',content:'今天在图书馆自习了一整天，效率超高！📚\n\n分享几张图书馆的美景~',images:[],tags:['#学习日常','#图书馆'],visibility:'public',likes:['20210002','20210003','admin001'],comments:[{userId:'20210002',content:'学霸加油！💪',timestamp:Date.now()-864e5}],createdAt:Date.now()-864e5*2,updatedAt:null,isDeleted:false},
+      {id:'p2',userId:'20210002',type:'normal',content:'考研倒计时100天！坚持就是胜利✊\n\n**每日计划：**\n- 6:30 起床\n- 7:00-8:00 英语早读\n- 8:30-12:00 专业课\n- 14:00-17:30 数学\n- 19:00-22:00 政治',images:[],tags:['#考研','#坚持'],visibility:'public',likes:['20210001','20210003','admin001'],comments:[{userId:'20210001',content:'加油！你一定可以的！',timestamp:Date.now()-864e5*1.5},{userId:'20210003',content:'佩服你的毅力 @李四学姐',timestamp:Date.now()-864e5}],createdAt:Date.now()-864e5*3,updatedAt:null,isDeleted:false},
+      {id:'p3',userId:'20210001',type:'normal',content:'分享一下昨天拍的校园日落🌅\n真的太美了！',images:[],tags:['#摄影','#日落','#校园美景'],visibility:'public',likes:['20210002'],comments:[],createdAt:Date.now()-864e5*5,updatedAt:null,isDeleted:false},
+      {id:'p4',userId:'20210003',type:'poll',content:'这周末篮球友谊赛，谁来？🏀',images:[],tags:['#篮球','#校园生活'],visibility:'public',pollOptions:['我一定到！','看情况','来不了😢'],pollVotes:{},likes:['20210001','20210002'],comments:[{userId:'20210001',content:'我报名！',timestamp:Date.now()-864e5*4}],createdAt:Date.now()-864e5*6,updatedAt:null,isDeleted:false},
+      {id:'p5',userId:'admin001',type:'normal',content:'🎉 欢迎来到校园圈！\n\n这是一个**校园生活交友平台**，你可以在这里：\n- ✅ 发布动态分享校园生活\n- ✅ 关注好友互动交流\n- ✅ 发现有趣的人和事\n- ✅ 创建群组一起玩耍\n- ✅ 每日签到领取成就\n\n> 快来加入我们吧！',images:[],tags:['#校园圈','#欢迎'],visibility:'public',likes:['20210001','20210002','20210003'],comments:[{userId:'20210001',content:'平台很棒！',timestamp:Date.now()-864e5*7}],createdAt:Date.now()-864e5*10,updatedAt:null,isDeleted:false}
+    ];
+    const msgs=[
+      {id:'m1',from:'20210001',to:'20210002',content:'学姐好！想问一下考研的经验~',timestamp:Date.now()-864e5*2,read:true},
+      {id:'m2',from:'20210002',to:'20210001',content:'当然可以！你打算考什么专业呀？',timestamp:Date.now()-864e5*2+6e4,read:true},
+      {id:'m3',from:'20210001',to:'20210002',content:'我想考计算机专业 💻',timestamp:Date.now()-864e5*2+12e4,read:false}
+    ];
+    const notifs=[
+      {id:genId(),userId:'20210001',type:'like',fromUserId:'20210002',postId:'p1',content:'赞了你的动态',timestamp:Date.now()-864e5,read:false},
+      {id:genId(),userId:'20210001',type:'comment',fromUserId:'20210003',postId:'p2',content:'评论了你的动态',timestamp:Date.now()-864e5*2,read:false},
+      {id:genId(),userId:'20210001',type:'follow',fromUserId:'admin001',postId:null,content:'关注了你',timestamp:Date.now()-864e5*3,read:true}
+    ];
+    const groups=[
+      {id:'g1',name:'📚 考研互助组',desc:'考研路上的战友们，一起加油！',creatorId:'20210002',members:['20210002','20210001'],posts:[],createdAt:Date.now()-864e5*10},
+      {id:'g2',name:'🏀 篮球爱好者',desc:'每周五下午球场见！',creatorId:'20210003',members:['20210003','20210001'],posts:[],createdAt:Date.now()-864e5*8},
+      {id:'g3',name:'📷 摄影社',desc:'分享校园美景和摄影技巧',creatorId:'20210001',members:['20210001','20210002'],posts:[],createdAt:Date.now()-864e5*5}
+    ];
+    setDB('users',[admin,u1,u2,u3]);setDB('posts',posts);setDB('messages',msgs);setDB('notifications',notifs);setDB('groups',groups);
+    setDB('checkins',{'20210001':{lastDate:new Date().toDateString(),streak:5}});
+    setDB('initialized',true);
+  }
+}
+initDB();
+
+// =====================================================
+// APP STATE
+// =====================================================
+let currentUser=null,currentFeed='all',currentProfileUser=null,currentPost=null,currentChatUser=null,currentGroup=null;
+let editingInterests=[],regInterests=[],postImages=[],tempAvatar=null;
+let feedPage=0,feedLoading=false,hasMorePosts=true;
+const PAGE_SIZE=5;
+
+// =====================================================
+// SIDEBAR TOGGLE
+// =====================================================
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// =====================================================
+// HELPERS
+// =====================================================
+function $(id){return document.getElementById(id)}
+function toast(msg,type){type=type||'info';const c=$('toastContainer'),el=document.createElement('div');el.className='toast toast-'+type;el.textContent=msg;c.appendChild(el);setTimeout(()=>el.remove(),3000)}
+function showModal(title,content,actions){
+  const overlay=document.createElement('div');overlay.className='modal-overlay';
+  overlay.innerHTML='<div class="modal"><h3>'+title+'</h3><div>'+content+'</div><div class="modal-actions"></div></div>';
+  const ad=overlay.querySelector('.modal-actions');
+  actions.forEach(a=>{const btn=document.createElement('button');btn.className='btn '+(a.cls||'btn-outline')+' btn-sm';btn.textContent=a.text;btn.onclick=()=>{if(a.callback)a.callback();overlay.remove()};ad.appendChild(btn)});
+  overlay.onclick=function(e){if(e.target===overlay)overlay.remove()};document.body.appendChild(overlay);return overlay
+}
+function extractTags(c){const t=c.match(/#[一-龥\w]+/g);return t?[...new Set(t)]:[]}
+function extractMentions(c){const t=c.match(/@(\w+)/g);return t?[...new Set(t.map(m=>m.slice(1)))]:[]}
+
+function renderMarkdown(text){
+  if(!text)return'';
+  let h=escapeHtml(text);
+  h=h.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>');
+  h=h.replace(/`([^`]+)`/g,'<code>$1</code>');
+  h=h.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  h=h.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  h=h.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  h=h.replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>');
+  h=h.replace(/^- (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>');
+  h=h.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1">');
+  h=h.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');
+  h=h.replace(/@(\w+)/g,'<span style="color:var(--primary);font-weight:500">@$1</span>');
+  return h
+}
+
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function linkifyTags(text){return text.replace(/#[一-龥\w]+/g,'<span class="post-tag" style="cursor:pointer">$&</span>')}
+
+// =====================================================
+// NOTIFICATIONS
+// =====================================================
+function addNotification(userId,type,fromUserId,postId,content){
+  if(fromUserId===userId)return;
+  const notifs=getNotifications();
+  notifs.unshift({id:genId(),userId,type,fromUserId,postId,content,timestamp:Date.now(),read:false});
+  if(notifs.length>50)notifs.length=50;
+  saveNotifications(notifs);updateNotifBadge();
+}
+function updateNotifBadge(){
+  if(!currentUser)return;
+  const count=getNotifications().filter(n=>n.userId===currentUser.id&&!n.read).length;
+  const badge=$('notifBadge');
+  if(count>0){badge.style.display='flex';badge.textContent=count>99?'99+':count}else{badge.style.display='none'}
+}
+function toggleNotifDropdown(){
+  const dd=$('notifDropdown');dd.classList.toggle('show');
+  if(dd.classList.contains('show'))renderNotifs();
+}
+function renderNotifs(){
+  if(!currentUser)return;
+  const notifs=getNotifications().filter(n=>n.userId===currentUser.id).sort((a,b)=>b.timestamp-a.timestamp);
+  const list=$('notifList');
+  if(notifs.length===0){list.innerHTML='<div class="notif-empty">暂无通知</div>';return}
+  list.innerHTML=notifs.map(n=>{
+    const u=getUser(n.fromUserId);const icon={like:'❤️',comment:'💬',follow:'👤',group:'👥',group_invite:'📨',system:'🔔'};
+    return'<div class="notif-item'+(n.read?'':' unread')+'" onclick="handleNotifClick(\''+n.id+'\',\''+n.postId+'\',\''+n.fromUserId+'\')">'+
+      '<img class="notif-avatar" src="'+(u?u.avatar:DEFAULT_AVATAR)+'">'+
+      '<div class="notif-body"><strong>'+(u?u.nickname:'系统')+'</strong> '+(icon[n.type]||'')+' '+n.content+'<div class="notif-time">'+formatTime(n.timestamp)+'</div></div></div>'
+  }).join('');
+}
+function handleNotifClick(nid,postId,fromUserId){
+  const notifs=getNotifications();const n=notifs.find(x=>x.id===nid);if(n){n.read=true;saveNotifications(notifs);updateNotifBadge()}
+  $('notifDropdown').classList.remove('show');
+  if(n&&n.type==='group_invite')navigate('group-detail',postId);
+  else if(postId)navigate('post-detail',postId);else if(fromUserId)navigate('profile',fromUserId)
+}
+function markAllNotifRead(){
+  if(!currentUser)return;
+  const notifs=getNotifications();notifs.forEach(n=>{if(n.userId===currentUser.id)n.read=true});
+  saveNotifications(notifs);updateNotifBadge();renderNotifs();toast('已全部标记为已读','success')
+}
+// Click outside to close notification
+document.addEventListener('click',function(e){const dd=$('notifDropdown'),bell=$('notifBell');if(dd&&bell&&!dd.contains(e.target)&&!bell.contains(e.target))dd.classList.remove('show')});
+
+// =====================================================
+// EMOJI PICKER
+// =====================================================
+let emojiTargetInput=null;
+function toggleEmojiPicker(btnId,targetInputId){
+  emojiTargetInput=targetInputId;
+  const picker=$('emojiPicker'),btn=$(btnId);
+  const rect=btn.getBoundingClientRect();
+  picker.style.top=(rect.bottom+4)+'px';picker.style.left=Math.min(rect.left,window.innerWidth-310)+'px';
+  if(picker.classList.contains('show')&&picker.dataset.target===targetInputId){picker.classList.remove('show');return}
+  picker.dataset.target=targetInputId;
+  picker.innerHTML=EMOJI_LIST.map(e=>'<button class="emoji-item" onclick="insertEmoji(\''+e+'\')">'+e+'</button>').join('');
+  picker.classList.add('show');
+}
+function insertEmoji(emoji){
+  if(!emojiTargetInput)return;
+  const el=$(emojiTargetInput);if(!el)return;
+  const start=el.selectionStart,end=el.selectionEnd;
+  el.value=el.value.substring(0,start)+emoji+el.value.substring(end);
+  el.selectionStart=el.selectionEnd=start+emoji.length;
+  el.focus();$('emojiPicker').classList.remove('show');
+}
+document.addEventListener('click',function(e){const p=$('emojiPicker');if(p&&!p.contains(e.target)&&!e.target.classList.contains('emoji-btn'))p.classList.remove('show')});
+
+// =====================================================
+// CHECK-IN
+// =====================================================
+function updateCheckinUI(){
+  if(!currentUser)return;
+  const ci=getCheckins(),today=new Date().toDateString(),uc=ci[currentUser.id]||{};
+  const btn=$('checkinBtn'),sBtn=$('sidebarCheckinBtn');
+  const streak=$('checkinStreak'),sStreak=$('sidebarCheckinStreak');
+  if(uc.lastDate===today){
+    btn.textContent='✅';btn.classList.add('done');sBtn.textContent='✅ 已签到';sBtn.classList.add('done');
+    streak.textContent='连续'+uc.streak+'天';sStreak.textContent='连续签到 '+uc.streak+' 天';
+  }else{
+    btn.textContent='📅';btn.classList.remove('done');sBtn.textContent='📅 每日签到';sBtn.classList.remove('done');
+    streak.textContent=uc.streak?'连续'+uc.streak+'天':'';sStreak.textContent=uc.streak?'连续 '+uc.streak+' 天':'';
+  }
+}
+function doCheckIn(){
+  if(!currentUser){toast('请先登录后再签到','warning');navigate('login');return;}
+  const ci=getCheckins(),today=new Date().toDateString(),uc=ci[currentUser.id]||{};
+  if(uc.lastDate===today){toast('今天已经签到过了！','warning');return}
+  const yesterday=new Date(Date.now()-864e5).toDateString();
+  const streak=(uc.lastDate===yesterday?(uc.streak||0):0)+1;
+  ci[currentUser.id]={lastDate:today,streak};saveCheckins(ci);
+  toast('签到成功！连续签到 '+streak+' 天','success');
+  updateCheckinUI();
+  if(streak===7)addNotification(currentUser.id,'system','system',null,'恭喜达成 7 天连续签到！')
+}
+
+// =====================================================
+// BADGES
+// =====================================================
+function computeBadges(user){
+  const posts=getPosts().filter(p=>p.userId===user.id&&!p.isDeleted);
+  const totalLikes=posts.reduce((s,p)=>s+p.likes.length,0);
+  const checkins=getCheckins();const streak=(checkins[user.id]||{}).streak||0;
+  return [
+    {icon:'📝',name:'初来乍到',desc:'发布第1条动态',unlocked:posts.length>=1},
+    {icon:'✍️',name:'内容创作者',desc:'发布10条动态',unlocked:posts.length>=10},
+    {icon:'📰',name:'校园博主',desc:'发布50条动态',unlocked:posts.length>=50},
+    {icon:'❤️',name:'人气之星',desc:'获得50个赞',unlocked:totalLikes>=50},
+    {icon:'🔥',name:'爆款制造者',desc:'获得500个赞',unlocked:totalLikes>=500},
+    {icon:'👥',name:'社交达人',desc:'拥有20位粉丝',unlocked:user.followers.length>=20},
+    {icon:'📅',name:'坚持七天',desc:'连续签到7天',unlocked:streak>=7},
+    {icon:'🏆',name:'月度劳模',desc:'连续签到30天',unlocked:streak>=30},
+  ];
+}
+
+// =====================================================
+// NAVIGATION
+// =====================================================
+function navigate(page,data){
+  // Auth check: visitors redirected to login for protected pages
+  const authPages=['create','messages','dashboard','admin','edit-profile','groups','group-detail'];
+  if(!currentUser&&authPages.includes(page)){
+    toast('请先登录后再使用此功能','warning');navigate('login');return;
+  }
+  if(page==='admin'&&currentUser&&!currentUser.isAdmin){
+    toast('无权限访问','error');navigate('home');return;
+  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=$('page-'+page);if(target)target.classList.add('active');
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  const nl=document.querySelector('[data-page="'+page+'"]');if(nl)nl.classList.add('active');
+  window.scrollTo(0,0);
+  document.getElementById('sidebar').classList.remove('open');
+  switch(page){
+    case'home':feedPage=0;hasMorePosts=true;renderHome();break;
+    case'profile':renderProfile(data);break;
+    case'edit-profile':renderEditProfile();break;
+    case'post-detail':if(data)renderPostDetail(data);break;
+    case'dashboard':renderDashboard();break;
+    case'groups':renderGroups();break;
+    case'group-detail':if(data)renderGroupDetail(data);break;
+    case'messages':renderMessages();break;
+    case'admin':renderAdmin();break;
+  }
+  updateNavUI();
+}
+
+function updateNavUI(){
+  if(currentUser){
+    $('topbarGuest').style.display='none';$('topbarUserInfo').classList.add('show');
+    $('topbarAvatar').src=currentUser.avatar;$('topbarNickname').textContent=currentUser.nickname;
+    $('sidebarCreate').style.display='';$('sidebarMessages').style.display='';$('sidebarGroups').style.display='';$('sidebarDashboard').style.display='';
+    $('sidebarAdmin').style.display=currentUser.isAdmin?'':'none';$('feedTabs').style.display='';
+    $('sidebarCheckinSection').style.display='';
+    updateNotifBadge();updateCheckinUI();renderSidebarProfile();
+  }else{
+    $('topbarGuest').style.display='';$('topbarUserInfo').classList.remove('show');
+    $('sidebarCreate').style.display='';$('sidebarMessages').style.display='';$('sidebarGroups').style.display='';$('sidebarDashboard').style.display='';$('sidebarAdmin').style.display='none';
+    $('feedTabs').style.display='';
+    $('sidebarCheckinSection').style.display='';
+    renderSidebarProfile();
+  }
+}
+
+function renderSidebarProfile(){
+  if(currentUser){
+    $('spcAvatar').src=currentUser.avatar;
+    $('spcNickname').textContent=currentUser.nickname;
+    const posts=getPosts().filter(p=>p.userId===currentUser.id&&!p.isDeleted);
+    $('spcPosts').textContent=posts.length;
+    $('spcFollowing').textContent=currentUser.following.length;
+    $('spcFollowers').textContent=currentUser.followers.length;
+  }else{
+    $('spcAvatar').src=DEFAULT_AVATAR;
+    $('spcNickname').textContent='未登录';
+    $('spcPosts').textContent='0';
+    $('spcFollowing').textContent='0';
+    $('spcFollowers').textContent='0';
+  }
+}
+
+// =====================================================
+// THEME
+// =====================================================
+function toggleTheme(){
+  const cur=document.body.getAttribute('data-theme'),next=cur==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',next);localStorage.setItem('campus_theme',next);
+}
+(function(){const s=localStorage.getItem('campus_theme');if(s)document.body.setAttribute('data-theme',s)})();
+
+// =====================================================
+// AUTH
+// =====================================================
+function login(){
+  const id=$('loginId').value.trim(),pwd=$('loginPwd').value.trim();let valid=true;
+  if(!id){$('loginIdError').textContent='请输入学号';$('loginIdError').classList.add('show');valid=false}else{$('loginIdError').classList.remove('show')}
+  if(!pwd){$('loginPwdError').textContent='请输入密码';$('loginPwdError').classList.add('show');valid=false}else{$('loginPwdError').classList.remove('show')}
+  if(!valid)return;
+  const users=getUsers(),user=users.find(u=>u.id===id);
+  if(!user){$('loginIdError').textContent='学号不存在';$('loginIdError').classList.add('show');return}
+  if(user.password!==pwd){$('loginPwdError').textContent='密码错误';$('loginPwdError').classList.add('show');return}
+  if(user.isBanned){toast('该账号已被封禁，请联系管理员','error');return}
+  currentUser=user;user.lastActive=Date.now();saveUsers(users);
+  if($('rememberMe').checked)localStorage.setItem('campus_remembered',user.id);
+  $('loginId').value='';$('loginPwd').value='';toast('登录成功！欢迎 '+user.nickname,'success');navigate('home');
+}
+function register(){
+  const id=$('regId').value.trim(),nick=$('regNickname').value.trim(),pwd=$('regPwd').value,pwd2=$('regPwd2').value,bio=$('regBio').value.trim();let valid=true;
+  if(!/^\d{8,12}$/.test(id)){$('regIdError').textContent='学号需为8-12位数字';$('regIdError').classList.add('show');valid=false}else if(getUsers().find(u=>u.id===id)){$('regIdError').textContent='该学号已被注册';$('regIdError').classList.add('show');valid=false}else{$('regIdError').classList.remove('show')}
+  if(nick.length<2||nick.length>20){$('regNicknameError').textContent='昵称需为2-20个字符';$('regNicknameError').classList.add('show');valid=false}else{$('regNicknameError').classList.remove('show')}
+  if(pwd.length<6||pwd.length>20){$('regPwdError').textContent='密码需为6-20位';$('regPwdError').classList.add('show');valid=false}else{$('regPwdError').classList.remove('show')}
+  if(pwd!==pwd2){$('regPwd2Error').textContent='两次密码不一致';$('regPwd2Error').classList.add('show');valid=false}else{$('regPwd2Error').classList.remove('show')}
+  if(!valid)return;
+  const nu={id,username:'user_'+id,nickname:nick,password:pwd,avatar:DEFAULT_AVATAR,bio,interests:regInterests.slice(),followers:[],following:[],isBanned:false,isAdmin:false,createdAt:Date.now(),lastActive:Date.now(),visitCount:0,privacy:'public'};
+  const users=getUsers();users.push(nu);saveUsers(users);$('regId').value='';$('regNickname').value='';$('regPwd').value='';$('regPwd2').value='';$('regBio').value='';regInterests=[];$('regInterestWrap').querySelectorAll('.interest-chip').forEach(c=>c.remove());
+  toast('注册成功！请登录','success');navigate('login');
+}
+function logout(){currentUser=null;currentFeed='all';localStorage.removeItem('campus_remembered');toast('已退出登录','info');navigate('home')}
+function forgotPassword(){showModal('忘记密码','<p>请联系管理员重置密码。<br>管理员邮箱：ruilindeng02@gmail.com</p>',[{text:'知道了',cls:'btn-primary'}])}
+function togglePwd(inpId,togId){const inp=$(inpId),tog=$(togId);if(inp.type==='password'){inp.type='text';tog.textContent='🙈'}else{inp.type='password';tog.textContent='👁️'}}
+(function(){const r=localStorage.getItem('campus_remembered');if(r){const u=getUser(r);if(u&&!u.isBanned){currentUser=u;u.lastActive=Date.now();saveUsers(getUsers())}else{localStorage.removeItem('campus_remembered')}}})();
+
+// =====================================================
+// REG INTERESTS
+// =====================================================
+function addRegInterest(e){if(e.key==='Enter'){e.preventDefault();const v=$('regInterestInput').value.trim();if(v&&!regInterests.includes(v)&&regInterests.length<10){regInterests.push(v);renderRegInterests();$('regInterestInput').value=''}}}
+function removeRegInterest(i){regInterests.splice(i,1);renderRegInterests()}
+function renderRegInterests(){const w=$('regInterestWrap');w.querySelectorAll('.interest-chip').forEach(c=>c.remove());regInterests.forEach((t,i)=>{const chip=document.createElement('span');chip.className='interest-chip';chip.innerHTML=t+' <span class="remove" onclick="removeRegInterest('+i+')">×</span>';w.insertBefore(chip,$('regInterestInput'))})}
+
+// =====================================================
+// HOME / FEED (Infinite Scroll)
+// =====================================================
+function switchFeed(type){if(!currentUser&&type==='following'){toast('请先登录','warning');navigate('login');return}currentFeed=type;$('tabAll').classList.toggle('active',type==='all');$('tabFollowing').classList.toggle('active',type==='following');feedPage=0;hasMorePosts=true;$('postFeed').innerHTML='';renderHome()}
+
+function getFilteredPosts(){
+  let posts=getPosts().filter(p=>!p.isDeleted);
+  if(currentFeed==='following'&&currentUser){posts=posts.filter(p=>p.userId===currentUser.id||currentUser.following.includes(p.userId));posts=posts.filter(p=>p.visibility!=='private'||p.userId===currentUser.id)}
+  else{posts=posts.filter(p=>p.visibility==='public'||(currentUser&&p.userId===currentUser.id))}
+  posts.sort((a,b)=>b.createdAt-a.createdAt);return posts
+}
+
+function renderHome(){renderHotPosts();renderStories();renderFeed()}
+
+function renderHotPosts(){
+  const posts=getPosts().filter(p=>!p.isDeleted&&p.visibility==='public');posts.sort((a,b)=>b.likes.length-a.likes.length);
+  const top=posts.slice(0,5);if(top.length===0){$('hotSection').style.display='none';return}
+  $('hotSection').style.display='';$('hotPosts').innerHTML=top.map((p,i)=>{const u=getUser(p.userId);return'<div class="hot-card" onclick="navigate(\'post-detail\',\''+p.id+'\')"><div class="hot-rank">'+(i+1)+'</div><div class="hot-text">'+escapeHtml(p.content.substring(0,40))+'</div><div class="hot-meta">❤️ '+p.likes.length+' · '+(u?u.nickname:'未知')+'</div></div>'}).join('');
+  $('marqueeText').textContent='🔥 '+top.map(p=>escapeHtml(p.content.substring(0,30))).join(' ｜ ')
+}
+function renderStories(){
+  if(!currentUser){$('storiesBar').innerHTML='';return}
+  const users=getUsers().filter(u=>!u.isBanned&&u.id!==currentUser.id);
+  const followingUsers=users.filter(u=>currentUser.following.includes(u.id));
+  const otherUsers=users.filter(u=>!currentUser.following.includes(u.id));
+  const displayUsers=[...followingUsers,...otherUsers].slice(0,8);
+  let html='<div class="story-item" onclick="navigate(\'create\')"><div class="story-ring no-story"><span class="add-icon">+</span></div><span class="story-name">发动态</span></div>';
+  displayUsers.forEach(u=>{html+='<div class="story-item" onclick="navigate(\'profile\',\''+u.id+'\')"><div class="story-ring has-story"><img src="'+u.avatar+'" alt="'+u.nickname+'"></div><span class="story-name">'+u.nickname+'</span></div>'});
+  $('storiesBar').innerHTML=html
+}
+
+function renderFeed(){
+  const allPosts=getFilteredPosts(),start=feedPage*PAGE_SIZE,end=start+PAGE_SIZE,pagePosts=allPosts.slice(start,end);
+  if(pagePosts.length<PAGE_SIZE)hasMorePosts=false;
+  if(feedPage===0){$('postFeed').innerHTML=''}
+  if(allPosts.length===0&&feedPage===0){$('postFeed').innerHTML='';$('feedEmpty').style.display='';$('scrollSentinel').style.display='none';return}
+  $('feedEmpty').style.display='none';
+  $('postFeed').insertAdjacentHTML('beforeend',pagePosts.map(p=>renderPostCard(p)).join(''));
+  $('scrollSentinel').style.display=hasMorePosts?'':'none';feedLoading=false;
+  if(feedPage===0)setupInfiniteScroll();
+  feedPage++;
+}
+
+function setupInfiniteScroll(){
+  const sentinel=$('scrollSentinel');if(!sentinel)return;
+  const observer=new IntersectionObserver((entries)=>{if(entries[0].isIntersecting&&hasMorePosts&&!feedLoading){feedLoading=true;renderFeed()}},{rootMargin:'200px'});
+  observer.observe(sentinel);
+}
+
+function renderPostCard(p){
+  const u=getUser(p.userId);if(!u)return'';
+  const isLiked=currentUser&&p.likes.includes(currentUser.id);
+  const canDelete=currentUser&&(currentUser.id===p.userId||currentUser.isAdmin);
+  const canEdit=currentUser&&currentUser.id===p.userId;
+  const vl={public:'公开',friends:'好友可见',private:'仅自己'};
+  let contentHtml=renderMarkdown(p.content);
+  let extraHtml='';
+  if(p.type==='poll'&&p.pollOptions){
+    const totalVotes=Object.keys(p.pollVotes||{}).length;const userVote=(p.pollVotes||{})[currentUser?currentUser.id:''];
+    extraHtml='<div class="poll-box"><div class="poll-title">📊 '+escapeHtml(p.content.substring(0,60))+'</div>';
+    p.pollOptions.forEach((opt,i)=>{const vc=Object.values(p.pollVotes||{}).filter(v=>v===i).length;const pct=totalVotes>0?Math.round(vc/totalVotes*100):0;extraHtml+='<div class="poll-option'+(userVote===i?' voted':'')+'" onclick="votePoll(\''+p.id+'\','+i+')"><div class="poll-bar" style="width:'+pct+'%"></div><span class="poll-text">'+opt+'</span><span class="poll-pct">'+(totalVotes>0?pct+'%':'')+' <span style="font-size:11px;color:var(--text-muted)">'+vc+'票</span></span></div>'});
+    extraHtml+='<div class="poll-info">共 '+totalVotes+' 人参与投票</div></div>';
+  }
+  return'<div class="card post-card" id="post-'+p.id+'">'+
+    '<div class="post-header"><img class="post-avatar" src="'+u.avatar+'" alt="" onclick="navigate(\'profile\',\''+u.id+'\')" style="cursor:pointer"><div class="post-user-info"><span class="post-nickname" style="cursor:pointer" onclick="navigate(\'profile\',\''+u.id+'\')">'+u.nickname+'</span>'+(p.visibility!=='public'?' <span class="visibility-badge">'+vl[p.visibility]+'</span>':'')+(p.updatedAt?' <span class="visibility-badge">已编辑</span>':'')+'<div class="post-time">'+formatTime(p.createdAt)+'</div></div>'+(canDelete?'<button class="btn-icon" onclick="deletePost(\''+p.id+'\')" title="删除">🗑️</button>':'')+(canEdit?'<button class="btn-icon" onclick="editPost(\''+p.id+'\')" title="编辑">✏️</button>':'')+'</div>'+
+    (p.type==='poll'?extraHtml:'<div class="post-content rendered" onclick="navigate(\'post-detail\',\''+p.id+'\')" style="cursor:pointer">'+contentHtml+'</div>')+
+    (p.type!=='poll'&&p.images.length>0?'<div class="post-images col'+Math.min(p.images.length,3)+'">'+p.images.map(img=>'<img src="'+img+'" alt="" onclick="event.stopPropagation();showImageModal(\''+img+'\')">').join('')+'</div>':'')+
+    (p.tags.length>0?'<div class="post-tags">'+p.tags.map(t=>'<span class="post-tag">'+t+'</span>').join('')+'</div>':'')+
+    '<div class="post-actions">'+
+      '<button class="post-action'+(isLiked?' liked':'')+'" onclick="toggleLike(\''+p.id+'\')">'+(isLiked?'❤️':'🤍')+' <span>'+p.likes.length+'</span></button>'+
+      '<button class="post-action" onclick="navigate(\'post-detail\',\''+p.id+'\')">💬 <span>'+p.comments.length+'</span></button>'+
+      (currentUser?'<button class="post-action" onclick="sharePost(\''+p.id+'\')">📤 分享</button>':'')+
+      (currentUser?'<button class="post-action" onclick="bookmarkPost(\''+p.id+'\')">🔖 收藏</button>':'')+
+    '</div></div>';
+}
+
+function votePoll(postId,optIdx){
+  if(!currentUser){toast('请先登录','warning');return}
+  const posts=getPosts(),p=posts.find(x=>x.id===postId);if(!p)return;
+  if(!p.pollVotes)p.pollVotes={};p.pollVotes[currentUser.id]=optIdx;savePosts(posts);
+  feedPage=0;hasMorePosts=true;renderHome();
+  if(currentPost&&currentPost.id===postId){currentPost=p;renderPostDetail(postId)}
+}
+
+function toggleLike(postId){
+  if(!currentUser){toast('请先登录','warning');return}
+  const posts=getPosts(),p=posts.find(x=>x.id===postId);if(!p)return;
+  const idx=p.likes.indexOf(currentUser.id);
+  if(idx>-1)p.likes.splice(idx,1);else{p.likes.push(currentUser.id);if(p.userId!==currentUser.id)addNotification(p.userId,'like',currentUser.id,postId,'赞了你的动态')}
+  savePosts(posts);renderHome();
+  if(currentPost&&currentPost.id===postId){currentPost=p;renderPostDetail(postId)}
+}
+
+function deletePost(postId){
+  showModal('确认删除','<p>确定要删除这条动态吗？此操作不可恢复。</p>',[{text:'取消',cls:'btn-outline'},{text:'确认删除',cls:'btn-danger',callback:function(){const posts=getPosts(),p=posts.find(x=>x.id===postId);if(p)p.isDeleted=true;savePosts(posts);toast('动态已删除','success');renderHome();navigate('home')}}])
+}
+
+function editPost(postId){
+  const p=getPost(postId);if(!p||p.userId!==currentUser.id)return;
+  showModal('编辑动态','<textarea class="inline-edit-textarea" id="editPostContent">'+escapeHtml(p.content)+'</textarea>'+
+    '<div class="form-group" style="margin-top:10px"><label class="form-label">可见范围</label><select class="form-input" id="editPostVisibility"><option value="public"'+(p.visibility==='public'?' selected':'')+'>🌐 公开</option><option value="friends"'+(p.visibility==='friends'?' selected':'')+'>👥 仅好友</option><option value="private"'+(p.visibility==='private'?' selected':'')+'>🔒 仅自己</option></select></div>',
+    [{text:'取消',cls:'btn-outline'},{text:'保存',cls:'btn-primary',callback:function(){const c=$('editPostContent').value.trim();if(!c){toast('内容不能为空','warning');return}const posts=getPosts(),pp=posts.find(x=>x.id===postId);pp.content=c;pp.tags=extractTags(c);pp.visibility=$('editPostVisibility').value;pp.updatedAt=Date.now();savePosts(posts);toast('动态已更新','success');renderHome();if(currentPost&&currentPost.id===postId)navigate('post-detail',postId)}}])
+}
+
+function sharePost(postId){toast('链接已复制到剪贴板（模拟分享）','info')}
+function bookmarkPost(postId){toast('已收藏该动态（模拟收藏）','success')}
+
+// =====================================================
+// POST DETAIL
+// =====================================================
+function renderPostDetail(postId){
+  const p=getPost(postId);if(!p||p.isDeleted){toast('动态不存在','error');navigate('home');return}currentPost=p;
+  const u=getUser(p.userId);if(!u)return;const isLiked=currentUser&&p.likes.includes(currentUser.id);
+  let html='<div class="card"><a href="#" onclick="navigate(\'home\');return false" style="font-size:14px">← 返回首页</a>'+
+    '<div class="post-header" style="margin-top:16px"><img class="post-avatar" src="'+u.avatar+'" alt="" onclick="navigate(\'profile\',\''+u.id+'\')" style="cursor:pointer"><div class="post-user-info"><span class="post-nickname" style="cursor:pointer" onclick="navigate(\'profile\',\''+u.id+'\')">'+u.nickname+'</span><div class="post-time">'+formatTime(p.createdAt)+(p.updatedAt?' · 已编辑':'')+'</div></div></div>';
+  if(p.type==='poll'&&p.pollOptions){
+    const tv=Object.keys(p.pollVotes||{}).length;const uv=(p.pollVotes||{})[currentUser?currentUser.id:''];
+    html+='<div class="poll-box"><div class="poll-title">📊 '+escapeHtml(p.content)+'</div>';
+    p.pollOptions.forEach((opt,i)=>{const vc=Object.values(p.pollVotes||{}).filter(v=>v===i).length;const pct=tv>0?Math.round(vc/tv*100):0;html+='<div class="poll-option'+(uv===i?' voted':'')+'" onclick="votePoll(\''+p.id+'\','+i+')"><div class="poll-bar" style="width:'+pct+'%"></div><span class="poll-text">'+opt+'</span><span class="poll-pct">'+(tv>0?pct+'%':'')+' '+vc+'票</span></div>'});
+    html+='<div class="poll-info">共 '+tv+' 人参与投票</div></div>';
+  }else{
+    html+='<div class="post-content rendered">'+renderMarkdown(p.content)+'</div>';
+  }
+  if(p.images.length>0)html+='<div class="post-images col'+Math.min(p.images.length,3)+'">'+p.images.map(img=>'<img src="'+img+'" alt="" onclick="showImageModal(\''+img+'\')">').join('')+'</div>';
+  if(p.tags.length>0)html+='<div class="post-tags">'+p.tags.map(t=>'<span class="post-tag">'+t+'</span>').join('')+'</div>';
+  html+='<div class="post-actions"><button class="post-action'+(isLiked?' liked':'')+'" onclick="toggleLike(\''+p.id+'\')">'+(isLiked?'❤️':'🤍')+' <span>'+p.likes.length+' 赞</span></button><span class="post-action">💬 '+p.comments.length+' 评论</span></div></div>';
+  html+='<div class="card comment-section"><div class="comment-title">💬 评论 ('+p.comments.length+')</div>';
+  p.comments.forEach(c=>{const cu=getUser(c.userId);html+='<div class="comment-item"><div class="comment-header"><img class="comment-avatar" src="'+(cu?cu.avatar:DEFAULT_AVATAR)+'"><span class="comment-nickname">'+(cu?cu.nickname:'未知用户')+'</span><span class="comment-time">'+formatTime(c.timestamp)+'</span></div><div class="comment-body">'+renderMarkdown(c.content)+'</div></div>'});
+  if(p.comments.length===0)html+='<div style="text-align:center;color:var(--text-muted);padding:20px">暂无评论</div>';
+  if(currentUser){html+='<div class="comment-input-wrap"><button class="emoji-btn" id="detailEmojiBtn" onclick="toggleEmojiPicker(\'detailEmojiBtn\',\'commentInput\')">😊</button><input class="comment-input" id="commentInput" placeholder="写下你的评论... @用户名 提及用户" onkeydown="if(event.key===\'Enter\')addComment(\''+p.id+'\')"><button class="btn btn-primary btn-sm" onclick="addComment(\''+p.id+'\')">发送</button></div>'}
+  html+='</div>';$('postDetailContent').innerHTML=html;
+}
+
+function addComment(postId){
+  if(!currentUser){toast('请先登录','warning');return}
+  const inp=$('commentInput');if(!inp)return;const c=inp.value.trim();if(!c)return;
+  const posts=getPosts(),p=posts.find(x=>x.id===postId);if(!p)return;
+  p.comments.push({userId:currentUser.id,content:c,timestamp:Date.now()});savePosts(posts);inp.value='';
+  if(p.userId!==currentUser.id)addNotification(p.userId,'comment',currentUser.id,postId,'评论了你的动态');
+  const mentions=extractMentions(c);mentions.forEach(m=>{const mu=getUsers().find(u=>u.nickname===m);if(mu&&mu.id!==currentUser.id)addNotification(mu.id,'comment',currentUser.id,postId,'在评论中提及了你')});
+  toast('评论成功','success');renderPostDetail(postId);renderHome()
+}
+
+// =====================================================
+// PROFILE
+// =====================================================
+function renderProfile(userId){
+  if(!userId&&!currentUser){toast('请先登录','warning');navigate('login');return}
+  const user=userId?getUser(userId):currentUser;if(!user){toast('用户不存在','error');navigate('home');return}
+  if(currentUser&&user.id!==currentUser.id){const users=getUsers();const u=users.find(x=>x.id===user.id);if(u){u.visitCount++;saveUsers(users)}}
+  currentProfileUser=user;const isOwn=currentUser&&currentUser.id===user.id,isFollowing=currentUser&&currentUser.following.includes(user.id);
+  const posts=getPosts().filter(p=>!p.isDeleted&&p.userId===user.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const badges=computeBadges(user);
+  let html='<div class="profile-header"><img class="profile-avatar" src="'+user.avatar+'" alt=""><div class="profile-nickname">'+user.nickname+(user.isAdmin?' 👑':'')+'</div><div class="profile-bio">'+(user.bio||'这个人很懒，什么都没写~')+'</div>'+
+    (user.interests.length>0?'<div class="profile-interests">'+user.interests.map(t=>'<span class="interest-tag">'+t+'</span>').join('')+'</div>':'')+
+    '<div class="badge-row">'+badges.map(b=>'<span class="badge-item'+(b.unlocked?'':' locked')+'" title="'+b.desc+'"><span class="badge-icon">'+b.icon+'</span> '+b.name+(b.unlocked?'':' 🔒')+'</span>').join('')+'</div>'+
+    '<div class="profile-meta"><div class="profile-meta-item"><div class="num">'+posts.length+'</div><div class="label">动态</div></div><div class="profile-meta-item" style="cursor:pointer" onclick="showFollowList(\''+user.id+'\',\'followers\')"><div class="num">'+user.followers.length+'</div><div class="label">粉丝</div></div><div class="profile-meta-item" style="cursor:pointer" onclick="showFollowList(\''+user.id+'\',\'following\')"><div class="num">'+user.following.length+'</div><div class="label">关注</div></div></div>'+
+    '<div class="profile-stats">🕐 最近活跃：'+formatTime(user.lastActive)+' · 👀 访问量：'+user.visitCount+'</div>'+
+    '<div class="profile-actions">'+(isOwn?'<button class="btn btn-outline btn-sm" onclick="navigate(\'edit-profile\')">✏️ 编辑资料</button>':'')+(!isOwn&&currentUser?'<button class="btn '+(isFollowing?'btn-outline':'btn-primary')+' btn-sm" onclick="toggleFollow(\''+user.id+'\')">'+(isFollowing?'已关注':'+ 关注')+'</button>':'')+(!isOwn&&currentUser?'<button class="btn btn-outline btn-sm" onclick="startChat(\''+user.id+'\')">💬 私信</button>':'')+(isOwn?'<button class="btn btn-outline btn-sm" onclick="showYearReview()">📊 年度回顾</button>':'')+'</div></div>';
+  html+='<h3 style="margin-bottom:12px">📝 '+(isOwn?'我的动态':'TA的动态')+' ('+posts.length+')</h3>';
+  if(posts.length===0)html+='<div class="empty-state"><div class="empty-icon">📭</div><p>暂无动态</p></div>';
+  else html+=posts.map(p=>renderPostCard(p)).join('');
+  $('profileContent').innerHTML=html;
+}
+
+function toggleFollow(userId){
+  if(!currentUser){toast('请先登录','warning');return}
+  const users=getUsers(),target=users.find(u=>u.id===userId),me=users.find(u=>u.id===currentUser.id);if(!target||!me)return;
+  const idx=me.following.indexOf(userId);
+  if(idx>-1){me.following.splice(idx,1);target.followers=target.followers.filter(id=>id!==currentUser.id);toast('已取消关注','info')}
+  else{me.following.push(userId);target.followers.push(currentUser.id);addNotification(userId,'follow',currentUser.id,null,'关注了你');toast('关注成功','success')}
+  saveUsers(users);currentUser=me;renderProfile(userId);renderSidebarProfile()
+}
+function showFollowList(userId,type){const user=getUser(userId);if(!user)return;const ids=type==='followers'?user.followers:user.following;const title=type==='followers'?'粉丝列表':'关注列表';let content=ids.length===0?'<p style="color:var(--text-muted)">暂无</p>':ids.map(id=>{const u=getUser(id);return u?'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer" data-uid="'+u.id+'" class="follow-list-item"><img src="'+u.avatar+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover"><span>'+u.nickname+'</span></div>':''}).join('');showModal(title,content,[{text:'关闭',cls:'btn-outline'}]);document.querySelectorAll('.follow-list-item').forEach(el=>{el.onclick=function(){closeAllModals();navigate('profile',this.dataset.uid)}})}
+function closeAllModals(){document.querySelectorAll('.modal-overlay').forEach(m=>m.remove())}
+
+// =====================================================
+// YEAR REVIEW
+// =====================================================
+function showYearReview(){
+  if(!currentUser)return;
+  const posts=getPosts().filter(p=>p.userId===currentUser.id&&!p.isDeleted);const totalLikes=posts.reduce((s,p)=>s+p.likes.length,0);const totalComments=posts.reduce((s,p)=>s+p.comments.length,0);const fans=currentUser.followers.length;const following=currentUser.following.length;
+  const ci=getCheckins();const streak=(ci[currentUser.id]||{}).streak||0;
+  const content='<div class="year-review"><div class="yr-big">🎓</div><h3>'+currentUser.nickname+' 的年度报告</h3><div class="yr-grid"><div class="yr-card"><div class="yr-num">'+posts.length+'</div><div class="yr-label">发布动态</div></div><div class="yr-card"><div class="yr-num">'+totalLikes+'</div><div class="yr-label">获得点赞</div></div><div class="yr-card"><div class="yr-num">'+totalComments+'</div><div class="yr-label">收到评论</div></div><div class="yr-card"><div class="yr-num">'+fans+'</div><div class="yr-label">粉丝数</div></div></div><p class="yr-stat">🔥 连续签到 <strong>'+streak+'</strong> 天</p><p class="yr-stat">👥 关注了 <strong>'+following+'</strong> 位好友</p><p style="color:var(--text-muted);margin-top:12px">感谢你在校园圈的每一次分享！</p></div>';
+  showModal('📊 年度回顾',content,[{text:'分享',cls:'btn-primary',callback:function(){toast('已生成年度报告卡片！','success')}},{text:'关闭',cls:'btn-outline'}])
+}
+
+// =====================================================
+// DASHBOARD
+// =====================================================
+function renderDashboard(){
+  if(!currentUser){toast('请先登录','warning');navigate('login');return}
+  const posts=getPosts().filter(p=>p.userId===currentUser.id&&!p.isDeleted);const totalLikes=posts.reduce((s,p)=>s+p.likes.length,0);const totalComments=posts.reduce((s,p)=>s+p.comments.length,0);
+  const now=Date.now();const days=[];for(let i=6;i>=0;i--){const d=new Date(now-864e5*i);days.push({label:d.toLocaleDateString('zh-CN',{weekday:'short'}),date:d.toDateString(),count:0})}
+  posts.forEach(p=>{const pd=new Date(p.createdAt).toDateString();const d=days.find(x=>x.date===pd);if(d)d.count++});
+  const maxCount=Math.max(1,...days.map(d=>d.count));
+  const barHtml=days.map(d=>'<div class="bar-col"><div class="bar-val">'+d.count+'</div><div class="bar-fill" style="height:'+(d.count/maxCount*100)+'%"></div><div class="bar-label">'+d.label+'</div></div>').join('');
+  const months=[];for(let i=5;i>=0;i--){const d=new Date(now);d.setMonth(d.getMonth()-i);months.push({label:d.getFullYear()+'/'+(d.getMonth()+1),key:d.getFullYear()+'-'+(d.getMonth()+1),count:0})}
+  posts.forEach(p=>{const pd=new Date(p.createdAt);const k=pd.getFullYear()+'-'+(pd.getMonth()+1);const m=months.find(x=>x.key===k);if(m)m.count++});
+  const maxMon=Math.max(1,...months.map(m=>m.count));
+  const monHtml=months.map(m=>'<div class="bar-col"><div class="bar-val">'+m.count+'</div><div class="bar-fill" style="height:'+(m.count/maxMon*100)+'%"></div><div class="bar-label">'+m.label+'</div></div>').join('');
+  $('dashboardContent').innerHTML='<h2 style="margin-bottom:16px">📊 数据仪表盘</h2>'+
+    '<div class="dash-grid"><div class="dash-card"><div class="dash-num">'+posts.length+'</div><div class="dash-label">📝 总动态</div></div><div class="dash-card"><div class="dash-num">'+totalLikes+'</div><div class="dash-label">❤️ 获赞</div></div><div class="dash-card"><div class="dash-num">'+totalComments+'</div><div class="dash-label">💬 评论</div></div><div class="dash-card"><div class="dash-num">'+currentUser.followers.length+'</div><div class="dash-label">👥 粉丝</div></div></div>'+
+    '<div class="dash-chart"><h3>📅 近7天发布动态</h3><div class="bar-chart">'+barHtml+'</div></div>'+
+    '<div class="dash-chart"><h3>📆 近6月发布动态</h3><div class="bar-chart">'+monHtml+'</div></div>';
+}
+
+// =====================================================
+// EDIT PROFILE
+// =====================================================
+function renderEditProfile(){if(!currentUser){toast('请先登录','warning');navigate('login');return}$('editNickname').value=currentUser.nickname;$('editBio').value=currentUser.bio||'';$('editPrivacy').value=currentUser.privacy||'public';editingInterests=currentUser.interests?currentUser.interests.slice():[];tempAvatar=null;$('editAvatarPreview').src=currentUser.avatar;renderEditInterests()}
+function renderEditInterests(){const w=$('interestWrap');w.querySelectorAll('.interest-chip').forEach(c=>c.remove());editingInterests.forEach((t,i)=>{const chip=document.createElement('span');chip.className='interest-chip';chip.innerHTML=t+' <span class="remove" onclick="removeEditInterest('+i+')">×</span>';w.insertBefore(chip,$('interestInput'))})}
+function addInterest(e){if(e.key==='Enter'){e.preventDefault();const v=$('interestInput').value.trim();if(v&&!editingInterests.includes(v)&&editingInterests.length<10){editingInterests.push(v);renderEditInterests();$('interestInput').value=''}}}
+function removeEditInterest(i){editingInterests.splice(i,1);renderEditInterests()}
+function previewAvatar(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){tempAvatar=ev.target.result;$('editAvatarPreview').src=tempAvatar};r.readAsDataURL(f)}
+function saveProfile(){if(!currentUser)return;const nick=$('editNickname').value.trim();if(nick.length<2||nick.length>20){toast('昵称需为2-20个字符','error');return}const users=getUsers(),me=users.find(u=>u.id===currentUser.id);if(!me)return;me.nickname=nick;me.bio=$('editBio').value.trim();me.interests=editingInterests.slice();me.privacy=$('editPrivacy').value;if(tempAvatar)me.avatar=tempAvatar;saveUsers(users);currentUser=me;tempAvatar=null;toast('资料已更新','success');navigate('profile')}
+
+// =====================================================
+// CREATE POST + DRAFT + POLL
+// =====================================================
+function previewPostImages(e){const files=Array.from(e.target.files);files.forEach(f=>{if(postImages.length>=9){toast('最多上传9张图片','warning');return}const r=new FileReader();r.onload=function(ev){postImages.push(ev.target.result);renderPostImagePreviews()};r.readAsDataURL(f)});e.target.value='';saveDraft()}
+function renderPostImagePreviews(){$('imagePreviewGrid').innerHTML=postImages.map((img,i)=>'<div class="image-preview-item"><img src="'+img+'" alt=""><button class="remove-img" onclick="removePostImage('+i+')">×</button></div>').join('')}
+function removePostImage(i){postImages.splice(i,1);renderPostImagePreviews();saveDraft()}
+function togglePollCreate(){const el=$('postPollCreate');el.style.display=el.style.display==='none'?'':'none';saveDraft()}
+function addPollOptionInput(){const div=$('pollOptionsInputs'),inp=document.createElement('input');inp.className='form-input';inp.placeholder='选项 '+(div.children.length+1);inp.style.marginBottom='6px';div.appendChild(inp);inp.addEventListener('input',saveDraft)}
+function publishPost(){
+  if(!currentUser){toast('请先登录','warning');return}
+  const content=$('postContent').value.trim();const isPoll=$('postPollCreate').style.display!=='none';
+  if(!content&&postImages.length===0&&!isPoll){toast('请输入内容或添加图片','warning');return}
+  const tags=extractTags(content);
+  const post={id:genId(),userId:currentUser.id,type:isPoll?'poll':'normal',content,images:postImages.slice(),tags,visibility:$('postVisibility').value,likes:[],comments:[],createdAt:Date.now(),updatedAt:null,isDeleted:false};
+  if(isPoll){const opts=[];$('pollOptionsInputs').querySelectorAll('input').forEach(inp=>{const v=inp.value.trim();if(v)opts.push(v)});if(opts.length<2){toast('请至少填写2个投票选项','warning');return}post.pollOptions=opts;post.pollVotes={}}
+  const posts=getPosts();posts.unshift(post);savePosts(posts);$('postContent').value='';postImages=[];renderPostImagePreviews();$('postPollCreate').style.display='none';clearDraft();
+  const mentions=extractMentions(content);mentions.forEach(m=>{const mu=getUsers().find(u=>u.nickname===m);if(mu&&mu.id!==currentUser.id)addNotification(mu.id,'comment',currentUser.id,post.id,'在动态中提及了你')});
+  toast('发布成功！','success');navigate('home')
+}
+function saveDraft(){
+  if(!currentUser)return;
+  const content=$('postContent').value;if(!content&&postImages.length===0)return;
+  const draft={content,images:postImages.slice(),tags:extractTags(content),visibility:$('postVisibility').value,isPoll:$('postPollCreate').style.display!=='none',savedAt:Date.now()};
+  setDB('draft_'+currentUser.id,draft);$('draftIndicator').style.display=''
+}
+function loadDraft(){
+  const draft=getDB('draft_'+currentUser.id,null);if(!draft){toast('没有保存的草稿','warning');return}
+  $('postContent').value=draft.content||'';postImages=draft.images||[];renderPostImagePreviews();$('postVisibility').value=draft.visibility||'public';$('postPollCreate').style.display=draft.isPoll?'':'none';toast('草稿已恢复','success')
+}
+function clearDraft(){setDB('draft_'+currentUser.id,null);$('draftIndicator').style.display='none'}
+(function(){if(currentUser){const d=getDB('draft_'+currentUser.id,null);if(d&&d.content)$('draftIndicator').style.display=''}})();
+document.addEventListener('input',function(e){if(e.target.id==='postContent')saveDraft()});
+
+// =====================================================
+// GROUPS
+// =====================================================
+function renderGroups(){
+  const groups=getGroups();
+  if(groups.length===0){$('groupGrid').innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><p>暂无群组，快去创建第一个吧！</p></div>';return}
+  $('groupGrid').innerHTML=groups.map(g=>'<div class="group-card" onclick="navigate(\'group-detail\',\''+g.id+'\')"><h3>'+g.name+'</h3><p>'+escapeHtml(g.desc||'')+'</p><div class="group-meta"><span>👤 '+g.members.length+' 成员</span><span>📝 0 动态</span></div></div>').join('')
+}
+function showCreateGroupModal(){
+  showModal('创建群组','<div class="form-group"><label class="form-label">群组名称</label><input class="form-input" id="newGroupName" placeholder="输入群组名称"></div><div class="form-group"><label class="form-label">群组简介</label><textarea class="form-input" id="newGroupDesc" rows="2" placeholder="介绍一下这个群组~"></textarea></div>',
+    [{text:'取消',cls:'btn-outline'},{text:'创建',cls:'btn-primary',callback:function(){const name=$('newGroupName').value.trim();if(!name){toast('请输入群组名称','warning');return}const g={id:genId(),name,desc:$('newGroupDesc').value.trim(),creatorId:currentUser.id,members:[currentUser.id],posts:[],createdAt:Date.now()};const groups=getGroups();groups.push(g);saveGroups(groups);toast('群组创建成功！','success');renderGroups()}}])
+}
+function renderGroupDetail(groupId){
+  const g=getGroups().find(x=>x.id===groupId);if(!g){toast('群组不存在','error');navigate('groups');return}currentGroup=g;
+  let html='<a href="#" onclick="navigate(\'groups\');return false" style="font-size:14px">← 返回群组列表</a>'+
+    '<div class="group-header"><h2>'+g.name+'</h2><p>'+escapeHtml(g.desc||'')+'</p><div class="group-members">'+g.members.map(id=>{const u=getUser(id);return u?'<span class="group-member" onclick="navigate(\'profile\',\''+u.id+'\')"><img src="'+u.avatar+'"><span>'+u.nickname+'</span></span>':''}).join('')+'</div>'+
+    '<div style="margin-top:12px;display:flex;gap:8px">'+(g.members.includes(currentUser?currentUser.id:'')?'<button class="btn btn-outline btn-sm" onclick="leaveGroup(\''+g.id+'\')">退出群组</button><button class="btn btn-primary btn-sm" onclick="showInviteModal(\''+g.id+'\')">📨 邀请</button>':'<button class="btn btn-primary btn-sm" onclick="joinGroup(\''+g.id+'\')">加入群组</button>')+'</div></div>';
+  if(g.members.includes(currentUser?currentUser.id:'')){
+    html+='<div class="group-chat"><div class="group-chat-header">💬 群聊</div><div class="group-chat-body" id="groupChatBody"></div><div class="group-chat-input"><input id="groupChatInput" placeholder="输入消息，按 Enter 发送..." onkeydown="if(event.key===\'Enter\')sendGroupMessage(\''+g.id+'\')"><button class="btn btn-primary btn-sm" onclick="sendGroupMessage(\''+g.id+'\')">发送</button></div></div>';
+  }
+  $('groupDetailContent').innerHTML=html;navigate('group-detail');
+  if(g.members.includes(currentUser?currentUser.id:''))renderGroupMessages(g.id)
+}
+function joinGroup(gid){const groups=getGroups(),g=groups.find(x=>x.id===gid);if(!g||!currentUser)return;if(!g.members.includes(currentUser.id)){g.members.push(currentUser.id);saveGroups(groups);const msgs=getGroupMessages();msgs.push({id:genId(),groupId:gid,userId:'',content:currentUser.nickname+' 加入了群组',timestamp:Date.now(),type:'system'});saveGroupMessages(msgs);toast('已加入群组','success');renderGroupDetail(gid)}}
+function leaveGroup(gid){const groups=getGroups(),g=groups.find(x=>x.id===gid);if(!g||!currentUser)return;g.members=g.members.filter(id=>id!==currentUser.id);saveGroups(groups);const msgs=getGroupMessages();msgs.push({id:genId(),groupId:gid,userId:'',content:currentUser.nickname+' 退出了群组',timestamp:Date.now(),type:'system'});saveGroupMessages(msgs);toast('已退出群组','info');renderGroupDetail(gid)}
+function renderGroupMessages(gid){
+  const msgs=getGroupMessages().filter(m=>m.groupId===gid).sort((a,b)=>a.timestamp-b.timestamp);
+  const body=$('groupChatBody');if(!body)return;
+  if(msgs.length===0){body.innerHTML='<div class="group-msg-system">暂无消息，发送第一条消息吧~</div>';return}
+  body.innerHTML=msgs.map(m=>{
+    if(m.type==='system')return'<div class="group-msg-system">'+m.content+'</div>';
+    const u=getUser(m.userId);const isMine=m.userId===currentUser.id;
+    return'<div class="group-msg'+(isMine?' mine':'')+'"><img class="group-msg-avatar" src="'+(u?u.avatar:DEFAULT_AVATAR)+'"><div class="group-msg-content"><div class="group-msg-user">'+(isMine?'我':(u?u.nickname:'未知'))+'</div><div class="group-msg-bubble">'+escapeHtml(m.content)+'</div><div class="group-msg-time">'+formatTime(m.timestamp)+'</div></div></div>'
+  }).join('');
+  body.scrollTop=body.scrollHeight
+}
+function sendGroupMessage(gid){
+  if(!currentUser)return;
+  const input=$('groupChatInput');const content=input.value.trim();
+  if(!content)return;
+  const g=getGroups().find(x=>x.id===gid);if(!g||!g.members.includes(currentUser.id)){toast('请先加入群组','warning');return}
+  const msgs=getGroupMessages();
+  msgs.push({id:genId(),groupId:gid,userId:currentUser.id,content,timestamp:Date.now()});
+  if(msgs.length>200)msgs.splice(0,msgs.length-200);
+  saveGroupMessages(msgs);
+  input.value='';
+  renderGroupMessages(gid)
+}
+function showInviteModal(gid){
+  const g=getGroups().find(x=>x.id===gid);if(!g)return;
+  const users=getUsers().filter(u=>!u.isBanned&&u.id!==currentUser.id&&!g.members.includes(u.id));
+  if(users.length===0){toast('没有可邀请的用户','warning');return}
+  const list=users.map(u=>'<div style="display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid var(--border)"><img src="'+u.avatar+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover"><div style="flex:1"><div style="font-weight:600;font-size:14px">'+u.nickname+'</div><div style="font-size:12px;color:var(--text-muted)">'+u.id+'</div></div><button class="btn btn-primary btn-sm" id="inviteBtn_'+u.id+'">邀请</button></div>').join('');
+  const overlay=showModal('📨 邀请用户加入「'+g.name+'」','<div style="max-height:350px;overflow-y:auto">'+list+'</div>',[{text:'关闭',cls:'btn-outline'}]);
+  users.forEach(u=>{
+    const btn=overlay.querySelector('#inviteBtn_'+u.id);
+    if(btn)btn.onclick=()=>{inviteToGroup(gid,u.id,btn)}
+  })
+}
+function inviteToGroup(gid,uid,btn){
+  const g=getGroups().find(x=>x.id===gid);if(!g)return;
+  addNotification(uid,'group_invite',currentUser.id,gid,'邀请你加入群组「'+g.name+'」');
+  btn.textContent='已邀请';btn.disabled=true;btn.classList.remove('btn-primary');btn.classList.add('btn-outline');
+  toast('邀请已发送！','success')
+}
+
+// =====================================================
+// SEARCH
+// =====================================================
+function onSearchFocus(){
+  const gv=$('globalSearch').value.trim();
+  navigate('search');
+  $('searchInput').value=gv;
+  if(gv)doSearch();
+  setTimeout(()=>{
+    const si=$('searchInput');si.focus();si.setSelectionRange(si.value.length,si.value.length);
+  },150);
+}
+function doSearch(){
+  const q=$('searchInput').value.trim().toLowerCase();
+  // Keep global search in sync
+  if($('globalSearch'))$('globalSearch').value=$('searchInput').value;
+  const resultsEl=$('searchResults');if(!resultsEl)return;
+  if(!q){resultsEl.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索用户或动态</p></div>';return}
+  const users=getUsers().filter(u=>!u.isBanned&&(u.nickname.toLowerCase().includes(q)||u.id.includes(q)||(u.interests&&u.interests.some(t=>t.toLowerCase().includes(q)))));
+  const posts=getPosts().filter(p=>!p.isDeleted&&p.visibility==='public'&&(p.content.toLowerCase().includes(q)||(p.tags&&p.tags.some(t=>t.toLowerCase().includes(q)))));
+  let html='';if(users.length>0){html+='<h3 style="margin-bottom:10px">👤 用户 ('+users.length+')</h3>';html+=users.map(u=>'<div class="search-result-item" onclick="navigate(\'profile\',\''+u.id+'\')"><img src="'+u.avatar+'" alt=""><div><div style="font-weight:600">'+u.nickname+'</div><div style="font-size:13px;color:var(--text-muted)">学号：'+u.id+' · '+(u.bio||'暂无简介')+'</div></div></div>').join('')}
+  if(posts.length>0){html+='<h3 style="margin-bottom:10px;margin-top:20px">📝 动态 ('+posts.length+')</h3>';html+=posts.map(p=>{const u=getUser(p.userId);return'<div class="card post-card" onclick="navigate(\'post-detail\',\''+p.id+'\')" style="cursor:pointer"><div class="post-header"><img class="post-avatar" src="'+(u?u.avatar:DEFAULT_AVATAR)+'"><div class="post-user-info"><span class="post-nickname">'+(u?u.nickname:'未知')+'</span><div class="post-time">'+formatTime(p.createdAt)+'</div></div></div><div class="post-content">'+highlightQuery(escapeHtml(p.content),q)+'</div></div>'}).join('')}
+  if(!html)html='<div class="empty-state"><div class="empty-icon">😕</div><p>没有找到相关内容</p></div>';
+  resultsEl.innerHTML=html}
+function highlightQuery(text,query){const e=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return text.replace(new RegExp('('+e+')','gi'),'<mark style="background:#fff3cd;padding:0 2px">$1</mark>')}
+
+// =====================================================
+// MESSAGES
+// =====================================================
+function renderMessages(){if(!currentUser){toast('请先登录','warning');navigate('login');return}
+  const msgs=getMessages();const cids=new Set();msgs.forEach(m=>{if(m.from===currentUser.id)cids.add(m.to);if(m.to===currentUser.id)cids.add(m.from)});
+  const contacts=Array.from(cids).map(id=>getUser(id)).filter(Boolean);
+  if(contacts.length===0){$('msgContacts').innerHTML='<div class="empty-state" style="padding:20px"><p style="font-size:13px">暂无联系人<br><br>去关注页找到好友开始聊天吧~</p></div>'}
+  else{$('msgContacts').innerHTML=contacts.map(c=>'<div class="msg-contact'+(currentChatUser&&currentChatUser.id===c.id?' active':'')+'" onclick="openChat(\''+c.id+'\')"><img src="'+c.avatar+'"><span style="font-size:14px">'+c.nickname+'</span></div>').join('')}
+  if(currentChatUser)openChat(currentChatUser.id);
+  else{$('msgChat').querySelector('.msg-chat-header').textContent='💬 选择联系人开始聊天';$('msgChatBody').innerHTML='<div class="empty-state"><p>选择左侧联系人查看聊天记录</p></div>';$('msgChatInput').style.display='none'}}
+function openChat(userId){currentChatUser=getUser(userId);if(!currentChatUser)return;$('msgChat').querySelector('.msg-chat-header').innerHTML='💬 '+currentChatUser.nickname;$('msgChatInput').style.display='';
+  const msgs=getMessages().filter(m=>(m.from===currentUser.id&&m.to===userId)||(m.from===userId&&m.to===currentUser.id)).sort((a,b)=>a.timestamp-b.timestamp);
+  msgs.forEach(m=>{if(m.to===currentUser.id)m.read=true});saveMessages(getMessages());
+  $('msgChatBody').innerHTML=msgs.map(m=>'<div class="msg-bubble '+(m.from===currentUser.id?'sent':'received')+'">'+renderMarkdown(m.content)+'<div style="font-size:10px;margin-top:4px;opacity:0.7">'+formatTime(m.timestamp)+'</div></div>').join('');$('msgChatBody').scrollTop=$('msgChatBody').scrollHeight;renderMessages()}
+function startChat(userId){if(!currentUser){toast('请先登录','warning');return}if(userId===currentUser.id){toast('不能和自己聊天哦','warning');return}const msgs=getMessages();const has=msgs.some(m=>(m.from===currentUser.id&&m.to===userId)||(m.from===userId&&m.to===currentUser.id));if(!has){msgs.push({id:genId(),from:currentUser.id,to:userId,content:'你好！',timestamp:Date.now(),read:false});saveMessages(msgs);addNotification(userId,'system',currentUser.id,null,'给你发了一条消息')}currentChatUser=getUser(userId);navigate('messages')}
+function sendMessage(){if(!currentUser||!currentChatUser)return;const inp=$('msgInput'),c=inp.value.trim();if(!c)return;const msgs=getMessages();msgs.push({id:genId(),from:currentUser.id,to:currentChatUser.id,content:c,timestamp:Date.now(),read:false});saveMessages(msgs);inp.value='';addNotification(currentChatUser.id,'system',currentUser.id,null,'给你发了一条新消息');openChat(currentChatUser.id)}
+
+// =====================================================
+// ADMIN
+// =====================================================
+function renderAdmin(){if(!currentUser||!currentUser.isAdmin){toast('无权限访问','error');navigate('home');return}
+  $('adminTableBody').innerHTML=getUsers().map(u=>{const posts=getPosts().filter(p=>p.userId===u.id&&!p.isDeleted);return'<tr><td><div class="user-cell"><img src="'+u.avatar+'"><span>'+u.nickname+(u.isAdmin?' 👑':'')+'</span></div></td><td>'+u.id+'</td><td>'+(u.isBanned?'<span class="badge badge-danger">已封禁</span>':'<span class="badge badge-success">正常</span>')+'</td><td>'+posts.length+'</td><td>'+new Date(u.createdAt).toLocaleDateString('zh-CN')+'</td><td>'+(u.isAdmin?'<span class="badge badge-warning">管理员</span>':'<button class="btn btn-sm '+(u.isBanned?'btn-primary':'btn-danger')+'" onclick="toggleBan(\''+u.id+'\')">'+(u.isBanned?'解封':'封禁')+'</button> <button class="btn btn-outline btn-sm" onclick="resetProfile(\''+u.id+'\')">重置资料</button>')+'</td></tr>'}).join('')}
+function toggleBan(uid){if(!currentUser||!currentUser.isAdmin)return;const users=getUsers(),u=users.find(x=>x.id===uid);if(!u||u.isAdmin)return;u.isBanned=!u.isBanned;saveUsers(users);toast(u.isBanned?'用户已封禁':'用户已解封','success');renderAdmin()}
+function resetProfile(uid){showModal('确认重置','<p>确定要重置该用户的资料吗？</p>',[{text:'取消',cls:'btn-outline'},{text:'确认重置',cls:'btn-danger',callback:function(){const users=getUsers(),u=users.find(x=>x.id===uid);if(!u||u.isAdmin)return;u.nickname='用户_'+u.id;u.bio='';u.interests=[];u.avatar=DEFAULT_AVATAR;saveUsers(users);toast('资料已重置','success');renderAdmin()}}])}
+
+// =====================================================
+// IMAGE MODAL
+// =====================================================
+function showImageModal(src){const o=document.createElement('div');o.className='modal-overlay';o.style.display='flex';o.style.alignItems='center';o.style.justifyContent='center';o.innerHTML='<img src="'+src+'" style="max-width:90%;max-height:90vh;border-radius:8px;cursor:pointer" onclick="event.stopPropagation()">';o.onclick=function(){o.remove()};document.body.appendChild(o)}
+
+// =====================================================
+// INIT
+// =====================================================
+updateNavUI();renderHome();
+document.addEventListener('keydown',function(e){if(e.ctrlKey&&e.key==='k'){e.preventDefault();$('globalSearch').focus()}});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click',function(e){
+  const sidebar=$('sidebar'),toggle=$('sidebar-toggle');
+  if(sidebar&&sidebar.classList.contains('open')&&!sidebar.contains(e.target)&&!toggle.contains(e.target)){
+    sidebar.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

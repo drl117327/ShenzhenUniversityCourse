@@ -1,0 +1,28 @@
+实验要求：
+不要改HTML代码，仅需补充内部CSS样式实现效果即可。
+内部CSS样式：
+1. 设置页面的背景为一个从左到右的线性渐变色。（颜色自定）
+2. 名片主体（.business-card）宽300px，高200px，圆角边框15px，定位在页面中心。
+3. 名片上的姓名字体设置为“Arial Black”，加粗，字号24px。
+4. 职位文本设置为斜体，颜色为灰色(#808080)。
+5. 联系方式文本下划线，颜色为蓝色(blue)，鼠标悬停时颜色变深(darkblue)。
+6. 名片背景图片，不重复，覆盖整个名片区域。背景图片直接使用实验1.3的图片链接
+7. 设置社交媒体图标为鼠标悬停时变为手型光标。
+参考代码框架：
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <div class="business-card">
+      <div class="name">John Doe</div>
+      <div class="position">Web Designer</div>
+      <div class="contact-info">john@example.com</div>
+      <img src="http://172.31.233.204/resource/img/email.png" class="social-icon" />
+    </div>
+  </body>
+</html>
+
