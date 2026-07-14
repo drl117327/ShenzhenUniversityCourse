@@ -1,0 +1,9 @@
+floors,eggs,bruteforce_result,naive_dp_result,optimized_dp_result,is_consistent
+5,1,5,5,5,True
+6,2,3,3,3,True
+10,2,4,4,4,True
+12,2,5,5,5,True
+14,3,4,4,4,True
+20,3,5,5,5,True
+25,3,5,5,5,True
+30,4,5,5,5,True
